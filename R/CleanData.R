@@ -979,29 +979,33 @@ GetAgesLU <- function(ageStrings){
 #' test
 #' @import data.table
 #' @import fhi
+#' @importFrom RAWmisc StableFile
 #' @export UpdateData
 UpdateData <- function(){
   files <- IdentifyDatasets()
   print(files)
   files <- files[is.na(isClean)]
   if(nrow(files)==0){
-    print("sykdomspuls RUN No new data")
-    print("sykdomspuls FINISHED Finished without new data")
+    print("R/SYKDOMSPULS No new data")
+    print("R/SYKDOMSPULS Finished without new data")
     return(FALSE)
   } else {
-    print("sykdomspuls FINISHED Getting new population data")
+    print("R/SYKDOMSPULS Updating data")
     EmailNotificationOfNewData(files$id)
     for(i in 1:nrow(files)){
-      print("UPDATING")
-      print(paste0("Cleaning file ",files[i]$id))
-      print(sprintf("sykdomspuls RUN Cleaning file %s",files[i]$id))
+      if(!RAWmisc::StableFile(fhi::DashboardFolder("data_raw",files[i]$raw))){
+        print(paste0("R/SYKDOMSPULS Unstable file ",files[i]$raw))
+        next
+      }
+      print(paste0("R/SYKDOMSPULS Cleaning file ",files[i]$id))
+      print(sprintf("R/SYKDOMSPULS sykdomspuls RUN Cleaning file %s",files[i]$id))
       d <- fread(fhi::DashboardFolder("data_raw",files[i]$raw))
       d[,date:=data.table::as.IDate(date)]
 
       LU <- GetAgesLU(ageStrings=unique(d$age))
       GetPopulation(L=LU$L,U=LU$U)
 
-      print("legekontakt_everyone")
+      print("R/SYKDOMSPULS legekontakt_everyone")
       res <- FormatData(d[Kontaktype=="Legekontakt"])
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_legekontakt_everyone.RDS")))
 
@@ -1013,13 +1017,13 @@ UpdateData <- function(){
       #res <- FormatData(d[Praksis=="Fastlege"])
       #saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_fastlege.RDS")))
 
-      print("everyone_everyone")
+      print("R/SYKDOMSPULS everyone_everyone")
       res <- FormatData(d)
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_everyone.RDS")))
 
       file.create(fhi::DashboardFolder("data_clean",paste0("done_",files[i]$id,".txt")))
     }
-    print("sykdomspuls RUN New data")
+    print("R/SYKDOMSPULS New data now exists")
     return(TRUE)
   }
 }
