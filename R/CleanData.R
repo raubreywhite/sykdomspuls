@@ -979,7 +979,7 @@ GetAgesLU <- function(ageStrings){
 #' test
 #' @import data.table
 #' @import fhi
-#' @importFrom RAWmisc StableFile
+#' @importFrom RAWmisc IsFileStable
 #' @export UpdateData
 UpdateData <- function(){
   files <- IdentifyDatasets()
@@ -993,7 +993,7 @@ UpdateData <- function(){
     print("R/SYKDOMSPULS Updating data")
     EmailNotificationOfNewData(files$id)
     for(i in 1:nrow(files)){
-      if(!RAWmisc::StableFile(fhi::DashboardFolder("data_raw",files[i]$raw))){
+      if(!RAWmisc::IsFileStable(fhi::DashboardFolder("data_raw",files[i]$raw))){
         print(paste0("R/SYKDOMSPULS Unstable file ",files[i]$raw))
         next
       }
