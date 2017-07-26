@@ -18,6 +18,8 @@ Imports:
   data.table,
   utils,
   fhi,
+  httr,
+  jsonlite,
   RAWmisc
 License: What license is it under?
 Encoding: UTF-8
