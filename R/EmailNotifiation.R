@@ -48,15 +48,15 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
     }
   }
   emailText <- "
-  Sykdomspulsen sin interne utbruddsovervåkning er nå oppdatert med nye tall.
+  Sykdomspulsen sin interne utbruddsoverv\u00E5kning er n\u00E5 oppdatert med nye tall.
   <br><br>
   Innlogging:<br>
   <a href='http://smhb.fhi.no/'>http://smhb.fhi.no/</a><br>
-  NB! Bruk Google Chrome når du logger deg inn!<br>
-  Brukernavn og passord står i arbeidsrutiner for utbruddsansvarlig.
+  NB! Bruk Google Chrome n\u00E5r du logger deg inn!<br>
+  Brukernavn og passord st\u00E5r i arbeidsrutiner for utbruddsansvarlig.
   <br><br>
-  Se på oversiktsbilde for de siste ukene for både mage-tarminfeksjoner og øvre luftveisinfeksjoner og meld ifra til fagansvarlig dersom:<br>
-  - Et eller flere av fylkene har rød farge en av de to siste ukene<br>
+  Se p\u00E5 oversiktsbilde for de siste ukene for b\u00E5de mage-tarminfeksjoner og \u00F8vre luftveisinfeksjoner og meld ifra til fagansvarlig dersom:<br>
+  - Et eller flere av fylkene har r\u00F8d farge en av de to siste ukene<br>
   - Et eller flere av fylkene har gul farge to av de tre siste ukene
   "
 

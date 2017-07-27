@@ -34,13 +34,13 @@ CheckForOutbreaksUtbrudd <- function(resYearLine=readRDS(fhi::DashboardFolder("r
 
     emailText <- sprintf("
 
-                         De følgende trenger oppfølging for uke %s:
+                         De f\u00F8lgende trenger oppf\u00F8lging for uke %s:
                          <br><br>
                          Mage-tarm diagnose:
                          <br>
                          %s
                          <br><br>
-                         Øvre-luftvei diagnose:
+                         \u00D8vre-luftvei diagnose:
                          <br>
                          %s
                          ",currentWeek,outbreaksGastro,outbreaksRespiratory)
