@@ -7,6 +7,19 @@
 FarringtonZscore(pred, phi, alpha = null, z = NULL,
   skewness.transform = "none", y)
 }
+\arguments{
+\item{pred}{a}
+
+\item{phi}{a}
+
+\item{alpha}{a}
+
+\item{z}{a}
+
+\item{skewness.transform}{a}
+
+\item{y}{a}
+}
 \description{
 test
 }

@@ -7,6 +7,17 @@
 FarringtonThreshold(pred, phi, alpha = null, z = NULL,
   skewness.transform = "none")
 }
+\arguments{
+\item{pred}{a}
+
+\item{phi}{a}
+
+\item{alpha}{a}
+
+\item{z}{a}
+
+\item{skewness.transform}{a}
+}
 \description{
 test
 }

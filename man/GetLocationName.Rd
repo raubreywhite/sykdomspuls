@@ -6,6 +6,11 @@
 \usage{
 GetLocationName(location, norwayLocations)
 }
+\arguments{
+\item{location}{a}
+
+\item{norwayLocations}{a}
+}
 \description{
 PROB
 }

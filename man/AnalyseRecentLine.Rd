@@ -6,6 +6,11 @@
 \usage{
 AnalyseRecentLine(data, v)
 }
+\arguments{
+\item{data}{a}
+
+\item{v}{a}
+}
 \description{
 PROJ
 }

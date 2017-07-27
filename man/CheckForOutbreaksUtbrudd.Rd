@@ -8,6 +8,9 @@
   CheckForOutbreaksUtbrudd(resYearLine = readRDS(fhi::DashboardFolder("results",
   "resYearLine.RDS")))
 }
+\arguments{
+\item{resYearLine}{a}
+}
 \description{
 test
 }

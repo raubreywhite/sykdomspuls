@@ -8,6 +8,27 @@ QuasipoissonAlgorithm(dataset, predinterval = 30, historical.data.years = 5,
   mod.pred.window = 90, reweights = 1, remove.pandemic.year = F,
   remove.highcounts = 0, sign.level = 0.05, isDaily = TRUE, v = 1)
 }
+\arguments{
+\item{dataset}{a}
+
+\item{predinterval}{a}
+
+\item{historical.data.years}{a}
+
+\item{mod.pred.window}{a}
+
+\item{reweights}{a}
+
+\item{remove.pandemic.year}{a}
+
+\item{remove.highcounts}{a}
+
+\item{sign.level}{a}
+
+\item{isDaily}{a}
+
+\item{v}{a}
+}
 \description{
 test
 }
