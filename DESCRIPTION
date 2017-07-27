@@ -21,6 +21,7 @@ Imports:
   httr,
   jsonlite,
   RAWmisc
+Suggests: testthat
 Remotes: raubreywhite/RAWmisc, raubreywhite/fhi
 License: What license is it under?
 Encoding: UTF-8
