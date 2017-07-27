@@ -21,6 +21,7 @@ Imports:
   httr,
   jsonlite,
   RAWmisc
+Remotes: raubreywhite/RAWmisc, raubreywhite/fhi
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
