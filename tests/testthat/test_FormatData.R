@@ -7,7 +7,7 @@ test_that("Basic Oslo", {
   for(i in 0:6){
     d[[i+1]] <- data.table(
       age=c("0-4","5-14","15-19","20-29","30-64","65+","Ukjent"),
-      date=as.character(as.Date("2006-01-23")+i),
+      date=data.table::as.IDate(as.Date("2006-01-23")+i),
       Kontaktype=c("Legekontakt"),
       Praksis=c("Fastlege"),
       influensa=c(100),
@@ -29,7 +29,7 @@ test_that("Basic Oslo", {
   )
 
   hellidager=data.table(
-    Dato=as.character(seq(as.Date("2006-01-23"),as.Date("2006-01-29"),by=1)),
+    Dato=data.table::as.IDate(seq(as.Date("2006-01-23"),as.Date("2006-01-29"),by=1)),
     HelligdagIndikator=0
   )
 
@@ -39,7 +39,7 @@ test_that("Basic Oslo", {
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
 
   expectedRes <- data.table(expand.grid(
-      date=as.character(seq(as.Date("2006-01-23"),as.Date("2006-01-29"),by=1)),
+      date=data.table::as.IDate(seq(as.Date("2006-01-23"),as.Date("2006-01-29"),by=1)),
       age=c("0-4","5-14","15-19","20-29","30-64","65+","Totalt"),
       stringsAsFactors = FALSE
     ))
@@ -50,13 +50,14 @@ test_that("Basic Oslo", {
   expectedRes[age=="Totalt",gastro:=700]
   expectedRes[,respiratory:=100]
   expectedRes[age=="Totalt",respiratory:=700]
-  expectedRes[,consult:=500]
-  expectedRes[age=="Totalt",consult:=3500]
+  expectedRes[,consultWithInfluensa:=500]
+  expectedRes[age=="Totalt",consultWithInfluensa:=3500]
+  expectedRes[,consultWithoutInfluensa:=consultWithInfluensa-influensa]
   expectedRes[,pop:=100]
   expectedRes[age=="Totalt",pop:=600]
   expectedRes[,county:="county03"]
   expectedRes[,HelligdagIndikator:=0]
-  setcolorder(expectedRes,c("date","municip","age","influensa","gastro","respiratory","consult","pop","county","HelligdagIndikator"))
+  setcolorder(expectedRes,c("date","HelligdagIndikator","county","municip","age","influensa","gastro","respiratory","consultWithInfluensa","consultWithoutInfluensa","pop"))
   setorder(expectedRes,date,age)
   setkey(expectedRes,date)
 
