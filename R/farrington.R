@@ -1,4 +1,9 @@
 #' test
+#' @param pred a
+#' @param phi a
+#' @param alpha a
+#' @param z a
+#' @param skewness.transform a
 #' @export FarringtonSEinGammaSpace
 FarringtonSEinGammaSpace <- function (pred, phi, alpha = null, z=NULL, skewness.transform = "none")
 {
@@ -21,6 +26,11 @@ FarringtonSEinGammaSpace <- function (pred, phi, alpha = null, z=NULL, skewness.
 }
 
 #' test
+#' @param pred a
+#' @param phi a
+#' @param alpha a
+#' @param z a
+#' @param skewness.transform a
 #' @export FarringtonThreshold
 FarringtonThreshold <- function (pred, phi, alpha = null, z=NULL, skewness.transform = "none")
 {
@@ -46,6 +56,12 @@ FarringtonThreshold <- function (pred, phi, alpha = null, z=NULL, skewness.trans
 }
 
 #' test
+#' @param pred a
+#' @param phi a
+#' @param alpha a
+#' @param z a
+#' @param skewness.transform a
+#' @param y a
 #' @export FarringtonZscore
 FarringtonZscore <- function (pred, phi, alpha = null, z=NULL, skewness.transform = "none", y)
 {

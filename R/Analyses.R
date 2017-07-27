@@ -1,4 +1,6 @@
 #' PROJ
+#' @param data a
+#' @param v a
 #' @import data.table
 #' @export AnalyseYearLine
 AnalyseYearLine <- function(data,  v) {
@@ -24,6 +26,8 @@ AnalyseYearLine <- function(data,  v) {
 }
 
 #' PROJ
+#' @param data a
+#' @param v a
 #' @import data.table
 #' @export AnalyseRecentLine
 AnalyseRecentLine <- function(data, v) {
@@ -74,6 +78,8 @@ RunOneAnalysis <- function(analysesStack,analysisData){
 }
 
 #' PROB
+#' @param location a
+#' @param norwayLocations a
 #' @import data.table
 #' @export GetLocationName
 GetLocationName <- function(location, norwayLocations) {
@@ -92,6 +98,8 @@ GetLocationName <- function(location, norwayLocations) {
 }
 
 #' PROB
+#' @param location a
+#' @param norwayLocations a
 #' @import data.table
 #' @export GetCountyFromMunicip
 GetCountyFromMunicip <- function(location, norwayLocations) {

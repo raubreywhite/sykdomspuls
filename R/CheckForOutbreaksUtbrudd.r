@@ -1,4 +1,5 @@
 #' test
+#' @param resYearLine a
 #' @import fhi
 #' @import data.table
 #' @export CheckForOutbreaksUtbrudd
