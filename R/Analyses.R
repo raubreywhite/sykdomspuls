@@ -84,7 +84,6 @@ RunOneAnalysis <- function(analysesStack,analysisData){
 #' @export GetLocationName
 GetLocationName <- function(location, norwayLocations) {
   locationName <- "Norge"
-  locationHTML <- "Norge"
 
   if (location != "Norge") {
     if (sum(norwayLocations$municip == location) > 0) {

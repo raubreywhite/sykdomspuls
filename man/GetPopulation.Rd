@@ -5,12 +5,15 @@
 \title{test}
 \usage{
 GetPopulation(L = c(0, 5, 15, 20, 30, 65), U = c(4, 14, 19, 29, 64, 9999),
-  saveFiles = fhi::DashboardFolder("data_clean", "pop.RDS"))
+  municip = c("0301"), saveFiles = fhi::DashboardFolder("data_clean",
+  "pop.RDS"))
 }
 \arguments{
 \item{L}{a}
 
 \item{U}{a}
+
+\item{municip}{a}
 
 \item{saveFiles}{a}
 }

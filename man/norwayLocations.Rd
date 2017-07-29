@@ -4,7 +4,7 @@
 \name{norwayLocations}
 \alias{norwayLocations}
 \title{norwayLocations}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 428 rows and 10 columns.}
+\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 426 rows and 9 columns.}
 \usage{
 norwayLocations
 }

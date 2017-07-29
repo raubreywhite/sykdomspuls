@@ -25,6 +25,8 @@ CONFIG$SYNDROMES <- c(CONFIG$SYNDROMES_DOCTOR, CONFIG$SYNDROMES_ALL)
 
 #' norwayLocations
 #' @export norwayLocations
-norwayLocations <- readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls"))
+norwayLocations <- GenNorwayLocations()
 
-
+#' norwayMunicipMerging
+#' @export norwayMunicipMerging
+norwayMunicipMerging <- GenNorwayMunicipMerging()
