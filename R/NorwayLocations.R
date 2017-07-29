@@ -9,7 +9,7 @@ GenNorwayLocations <- function(){
 
 #' GenNorwayMunicipMerging
 #' Last updated 2017-07-29
-#' @importFrom lubridate year today
+#' @importFrom lubridate today
 #' @importFrom readxl read_excel
 #' @import data.table
 #' @importFrom zoo na.locf
@@ -18,7 +18,7 @@ GenNorwayMunicipMerging <- function(){
   masterData <- data.table(readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls")))
   masterData[yearStart <= 2006, yearStart := 2006]
   setnames(masterData,"yearStart","year")
-  skeleton <- expand.grid(year = as.numeric(2006:lubridate::year(lubridate::today())),municip=unique(masterData$municip),stringsAsFactors = FALSE)
+  skeleton <- expand.grid(year = as.numeric(2006:data.table::year(lubridate::today())),municip=unique(masterData$municip),stringsAsFactors = FALSE)
   skeleton <- data.table(merge(skeleton, masterData, by=c("municip","year"), all.x=T))
   setorder(skeleton,municip,year)
   skeleton[is.na(yearEnd),yearEnd:=2017]
