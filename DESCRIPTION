@@ -20,6 +20,7 @@ Imports:
   fhi,
   httr,
   jsonlite,
+  zoo,
   RAWmisc
 Suggests: testthat
 Remotes: raubreywhite/RAWmisc, raubreywhite/fhi

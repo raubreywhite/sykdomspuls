@@ -167,7 +167,24 @@ FormatData <- function(d,
                        population=readRDS(fhi::DashboardFolder("data_clean","pop.RDS")),
                        hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE],
                        testIfHelligdagIndikatorFileIsOutdated=TRUE){
-  d <- d[,.(
+
+  # Dev purposes
+  if(FALSE){
+    norwayMunicipMerging <- GenNorwayMunicipMerging()
+    d <- fread("/data_raw/sykdomspuls/partially_formatted_2017_05_09.txt")
+    d[,date:=data.table::as.IDate(date)]
+
+    LU <- GetAgesLU(ageStrings=unique(d$age))
+    municip <- unique(norwayMunicipMerging$municip)
+    municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
+    GetPopulation(L=LU$L,U=LU$U, municip=municip)
+
+    population=readRDS(fhi::DashboardFolder("data_clean","pop.RDS"))
+    hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE]
+    testIfHelligdagIndikatorFileIsOutdated=TRUE
+  }
+
+  d <- d[municip!="municip9999",.(
     influensa=sum(influensa),
     gastro=sum(gastro),
     respiratory=sum(respiratory),
@@ -175,7 +192,8 @@ FormatData <- function(d,
   ),by=.(
     age,date,municip
   )]
-  skeleton <- data.table(expand.grid(unique(d$municip),unique(d$age),unique(d$date)))
+
+  skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),unique(d$date)))
   setnames(skeleton, c("municip","age","date"))
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)
   data[is.na(influensa),influensa:=0]
@@ -192,6 +210,7 @@ FormatData <- function(d,
   dates[,datex:=date]
   dates[,yrwk := format.Date(datex,"%G-%V")] #Week-based year, instead of normal year (%Y)
   dates[,year:=as.numeric(format.Date(date,"%G"))]
+  dates <- dates[year>=2006]
 
   # delete last day of data if it is not a sunday
   if(format.Date(max(dates$datex),"%u")!=7){
@@ -214,11 +233,25 @@ FormatData <- function(d,
   population <- rbindlist(population)
   population[,year:=as.numeric(year)]
 
+  dim(data)
   data <- merge(data,population,by=c("municip","year","age"),all.x=TRUE)
+  dim(data)
+
+  # KOMMUNE MERGING
+  dim(data)
+  data <- merge(data,norwayMunicipMerging[,c("municip","year","municipEnd")],by=c("municip","year"))
+  dim(data)
+  data <- data[,.(influensa=sum(influensa),
+                  gastro=sum(gastro),
+                  respiratory=sum(respiratory),
+                  consult=sum(consult),
+                  pop=sum(consult)),
+               by=.(municipEnd,year,age,date)]
+  dim(data)
+  setnames(data,"municipEnd","municip")
 
   # merging in municipalitiy-fylke names
-  data("countyToMunicip",package="fhi")
-  data <- merge(data,countyToMunicip[,c("municip","county"),with=FALSE],by="municip")
+  data <- merge(data,norwayLocations[,c("municip","county")],by="municip")
   data[,influensa:=as.numeric(influensa)]
   data[,gastro:=as.numeric(gastro)]
   data[,respiratory:=as.numeric(respiratory)]
@@ -229,7 +262,6 @@ FormatData <- function(d,
 
   data <- data[date>=data.table::as.IDate("2006-01-01")]
   data[,municip:=as.character(municip)]
-
 
   setnames(hellidager,c("date","HelligdagIndikator"))
   hellidager[,date:=data.table::as.IDate(date)]
@@ -341,7 +373,7 @@ UpdateData <- function(){
       d[,date:=data.table::as.IDate(date)]
 
       LU <- GetAgesLU(ageStrings=unique(d$age))
-      municip <- unique(d$municip)
+      municip <- unique(norwayMunicipMerging$municip)
       municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
       GetPopulation(L=LU$L,U=LU$U, municip=municip)
 

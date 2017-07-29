@@ -3,7 +3,7 @@
 #' @export GenNorwayLocations
 GenNorwayLocations <- function(){
   norwayLocations <- readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls"))
-  norwayLocations <- norwayLocations[is.na(norwayLocations$yearEnd),]
+  norwayLocations <- norwayLocations[is.na(norwayLocations$yearEnd),c("municip","municipName","county","countyName")]
   return(norwayLocations)
 }
 
