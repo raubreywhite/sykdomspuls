@@ -65,13 +65,17 @@ test_that("Basic Oslo", {
 
 test_that("Oslo + kristiansand fake data", {
   library(data.table)
-  if(interactive()) setwd("/packages/dashboards_sykdomspuls/tests/testthat")
-  d <- readRDS("partially_formatted_2017_05_09.RDS")
-  population <- readRDS("pop.RDS")
+  if(interactive()){
+    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+  } else {
+    BASE <- getwd()
+  }
+  d <- readRDS(file.path(BASE,"partially_formatted_2017_05_09.RDS"))
+  population <- readRDS(file.path(BASE,"pop.RDS"))
   for(i in 1:length(population)){
     if(!is.null(population[[i]])) population[[i]] <- population[[i]][municip %in% unique(d$municip)]
   }
-  hellidager=readRDS("hellidager.RDS")
+  hellidager=readRDS(file.path(BASE,"hellidager.RDS"))
 
   res <- FormatData(d,
                     population=population,
@@ -79,7 +83,7 @@ test_that("Oslo + kristiansand fake data", {
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
 
   if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/formatted_2017_05_09.RDS")
-  expectedRes <- readRDS("formatted_2017_05_09.RDS")
+  expectedRes <- readRDS(file.path(BASE,"formatted_2017_05_09.RDS"))
 
   expect_equal(res,expectedRes)
 })
