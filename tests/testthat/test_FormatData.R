@@ -1,6 +1,5 @@
 context("FormatData")
 
-
 test_that("Basic Oslo", {
   library(data.table)
   d <- vector("list",7)
@@ -39,10 +38,10 @@ test_that("Basic Oslo", {
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
 
   expectedRes <- data.table(expand.grid(
-      date=data.table::as.IDate(seq(as.Date("2006-01-23"),as.Date("2006-01-29"),by=1)),
-      age=c("0-4","5-14","15-19","20-29","30-64","65+","Totalt"),
-      stringsAsFactors = FALSE
-    ))
+    date=data.table::as.IDate(seq(as.Date("2006-01-23"),as.Date("2006-01-29"),by=1)),
+    age=c("0-4","5-14","15-19","20-29","30-64","65+","Totalt"),
+    stringsAsFactors = FALSE
+  ))
   expectedRes[,municip:="municip0301"]
   expectedRes[,influensa:=100]
   expectedRes[age=="Totalt",influensa:=700]
@@ -60,6 +59,27 @@ test_that("Basic Oslo", {
   setcolorder(expectedRes,c("date","HelligdagIndikator","county","municip","age","influensa","gastro","respiratory","consultWithInfluensa","consultWithoutInfluensa","pop"))
   setorder(expectedRes,date,age)
   setkey(expectedRes,date)
+
+  expect_equal(res,expectedRes)
+})
+
+test_that("Oslo + kristiansand fake data", {
+  library(data.table)
+  if(interactive()) setwd("/packages/dashboards_sykdomspuls/tests/testthat")
+  d <- readRDS("partially_formatted_2017_05_09.RDS")
+  population <- readRDS("pop.RDS")
+  for(i in 1:length(population)){
+    if(!is.null(population[[i]])) population[[i]] <- population[[i]][municip %in% unique(d$municip)]
+  }
+  hellidager=readRDS("hellidager.RDS")
+
+  res <- FormatData(d,
+                    population=population,
+                    hellidager=hellidager,
+                    testIfHelligdagIndikatorFileIsOutdated=FALSE)
+
+  if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/formatted_2017_05_09.RDS")
+  expectedRes <- readRDS("formatted_2017_05_09.RDS")
 
   expect_equal(res,expectedRes)
 })

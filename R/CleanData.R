@@ -167,21 +167,8 @@ FormatData <- function(d,
                        population=readRDS(fhi::DashboardFolder("data_clean","pop.RDS")),
                        hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE],
                        testIfHelligdagIndikatorFileIsOutdated=TRUE){
-
-  # Dev purposes
-  if(FALSE){
-    norwayMunicipMerging <- GenNorwayMunicipMerging()
-    d <- fread("/data_raw/sykdomspuls/partially_formatted_2017_05_09.txt")
+  if(! "IDate" %in% class(d$date)){
     d[,date:=data.table::as.IDate(date)]
-
-    LU <- GetAgesLU(ageStrings=unique(d$age))
-    municip <- unique(norwayMunicipMerging$municip)
-    municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
-    GetPopulation(L=LU$L,U=LU$U, municip=municip)
-
-    population=readRDS(fhi::DashboardFolder("data_clean","pop.RDS"))
-    hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE]
-    testIfHelligdagIndikatorFileIsOutdated=TRUE
   }
 
   d <- d[municip!="municip9999",.(
@@ -234,7 +221,7 @@ FormatData <- function(d,
   population[,year:=as.numeric(year)]
 
   dim(data)
-  data <- merge(data,population,by=c("municip","year","age"),all.x=TRUE)
+  data <- merge(data,population,by=c("municip","year","age"))
   dim(data)
 
   # KOMMUNE MERGING
@@ -245,7 +232,7 @@ FormatData <- function(d,
                   gastro=sum(gastro),
                   respiratory=sum(respiratory),
                   consult=sum(consult),
-                  pop=sum(consult)),
+                  pop=sum(pop)),
                by=.(municipEnd,year,age,date)]
   dim(data)
   setnames(data,"municipEnd","municip")
