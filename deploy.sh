@@ -20,6 +20,12 @@ addToDrat(){
   Rscript -e "drat::insertPackage('$PKG_REPO/$PKG_TARBALL', \
     repodir = '.', \
     commit='Travis update $PKG_REPO: build $TRAVIS_BUILD_NUMBER')"
+  echo 1
+  pwd
+  echo 2
+  ls
+  echo 3
+  ls /home/travis/build/raubreywhite/drat/.git/
   Rscript -e "saveRDS(read.dcf('src/contrib/PACKAGES'),'src/contrib/PACKAGES.rds')"
   git push 2>err.txt
 
