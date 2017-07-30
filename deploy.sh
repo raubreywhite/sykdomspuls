@@ -27,6 +27,7 @@ addToDrat(){
   echo 3
   ls /home/travis/build/raubreywhite/drat/.git/
   Rscript -e "saveRDS(read.dcf('src/contrib/PACKAGES'),'src/contrib/PACKAGES.rds')"
+  git commit -a -m "Fixing packages.rds"
   git push 2>err.txt
 
 }
