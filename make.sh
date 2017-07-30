@@ -1,6 +1,7 @@
 #!/bin/bash
-ls
-pwd
+DATE=`date +%Y.%m.%d`
+sed -i "s/^Version: .*$/Version: $DATE/" DESCRIPTION
+head DESCRIPTION
 
 ## Other options:
 ## Only add if the commit is tagged: so something like:
