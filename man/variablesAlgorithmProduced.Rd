@@ -4,7 +4,7 @@
 \name{variablesAlgorithmProduced}
 \alias{variablesAlgorithmProduced}
 \title{variablesAlgorithmProduced}
-\format{An object of class \code{character} of length 6.}
+\format{An object of class \code{character} of length 8.}
 \usage{
 variablesAlgorithmProduced
 }

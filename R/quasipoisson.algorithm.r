@@ -134,8 +134,26 @@ QuasipoissonAlgorithm = function(
   dataset.test[, threshold2 := FarringtonThreshold(pred, phi=dispersion_parameter, z=2, skewness.transform="2/3")]
   dataset.test[, threshold4 := FarringtonThreshold(pred, phi=dispersion_parameter, z=4, skewness.transform="2/3")]
   dataset.test[, threshold6 := FarringtonThreshold(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3")]
-  dataset.test[, cumE1 := n - threshold2]
   dataset.test[, zscore := FarringtonZscore(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3", y = n)]
+
+  dataset.test[, stderr := FarringtonSEinGammaSpace(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3")]
+  dataset.test[, cumE1 := n^(2/3)-threshold0^(2/3)]
+  dataset.test[, cumL1 := (cumE1-2*stderr)^(3/2)]
+  dataset.test[, cumU1 := (cumE1+2*stderr)^(3/2)]
+  dataset.test[, cumE1 := cumE1^(3/2)]
+
+  dataset.test[, revcumE1 := threshold0^(2/3)-n^(2/3)]
+  dataset.test[, revcumL1 := (revcumE1-2*stderr)^(3/2)]
+  dataset.test[, revcumU1 := (revcumE1+2*stderr)^(3/2)]
+  dataset.test[, revcumE1 := revcumE1^(3/2)]
+
+  dataset.test[is.nan(cumE1), cumE1 := -revcumE1]
+  dataset.test[is.nan(cumL1), cumL1 := -revcumU1]
+  dataset.test[is.nan(cumU1), cumU1 := -revcumL1]
+  dataset.test[,revcumE1:=NULL]
+  dataset.test[,revcumL1:=NULL]
+  dataset.test[,revcumU1:=NULL]
+  dataset.test[,stderr:=NULL]
 
   if(isDaily){
     return(dataset.test[,c(variablesAlgorithmDaily,variablesAlgorithmBasic,variablesAlgorithmProduced),with=F])

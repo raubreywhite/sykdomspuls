@@ -12,7 +12,7 @@ variablesAlgorithmBasic <- c("n","consult","pop","HelligdagIndikator")
 
 #' variablesAlgorithmProduced
 #' @export variablesAlgorithmProduced
-variablesAlgorithmProduced <- c("threshold0","threshold2","threshold4","threshold6","cumE1","zscore")
+variablesAlgorithmProduced <- c("threshold0","threshold2","threshold4","threshold6","cumE1","cumL1","cumU1","zscore")
 
 #' CONFIG
 #' @export CONFIG

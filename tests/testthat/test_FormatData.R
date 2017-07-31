@@ -70,20 +70,46 @@ test_that("Oslo + kristiansand fake data", {
   } else {
     BASE <- getwd()
   }
-  d <- readRDS(file.path(BASE,"partially_formatted_2017_05_09.RDS"))
-  population <- readRDS(file.path(BASE,"pop.RDS"))
+  d <- readRDS(file.path(BASE,"data","partially_formatted_2017_05_09.RDS"))
+  population <- readRDS(file.path(BASE,"data","pop.RDS"))
   for(i in 1:length(population)){
     if(!is.null(population[[i]])) population[[i]] <- population[[i]][municip %in% unique(d$municip)]
   }
-  hellidager=readRDS(file.path(BASE,"hellidager.RDS"))
+  hellidager=readRDS(file.path(BASE,"data","hellidager.RDS"))
 
   res <- FormatData(d,
                     population=population,
                     hellidager=hellidager,
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
 
-  if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/formatted_2017_05_09.RDS")
-  expectedRes <- readRDS(file.path(BASE,"formatted_2017_05_09.RDS"))
+  if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/results/formatted_2017_05_09.RDS")
+  expectedRes <- readRDS(file.path(BASE,"results","formatted_2017_05_09.RDS"))
+
+  expect_equal(res,expectedRes)
+})
+
+
+test_that("Sandefjord joining together", {
+  library(data.table)
+  if(interactive()){
+    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+  } else {
+    BASE <- getwd()
+  }
+  d <- readRDS(file.path(BASE,"data","partially_formatted_sandefjord.RDS"))
+  population <- readRDS(file.path(BASE,"data","pop.RDS"))
+  for(i in 1:length(population)){
+    if(!is.null(population[[i]])) population[[i]] <- population[[i]][municip %in% unique(d$municip)]
+  }
+  hellidager=readRDS(file.path(BASE,"data","hellidager.RDS"))
+
+  res <- FormatData(d,
+                    population=population,
+                    hellidager=hellidager,
+                    testIfHelligdagIndikatorFileIsOutdated=FALSE)
+
+  if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/results/formatted_sandefjord.RDS")
+  expectedRes <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
 
   expect_equal(res,expectedRes)
 })
