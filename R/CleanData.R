@@ -352,7 +352,7 @@ UpdateData <- function(){
     for(i in 1:nrow(files)){
       if(!RAWmisc::IsFileStable(fhi::DashboardFolder("data_raw",files[i]$raw))){
         print(paste0("R/SYKDOMSPULS Unstable file ",files[i]$raw))
-        next
+        return(FALSE)
       }
       print(paste0("R/SYKDOMSPULS Cleaning file ",files[i]$id))
       print(sprintf("R/SYKDOMSPULS sykdomspuls RUN Cleaning file %s",files[i]$id))
