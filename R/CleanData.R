@@ -340,22 +340,19 @@ GetAgesLU <- function(ageStrings){
 #' @export UpdateData
 UpdateData <- function(){
   files <- IdentifyDatasets()
-  print(files)
   files <- files[is.na(isClean)]
   if(nrow(files)==0){
-    print("R/SYKDOMSPULS No new data")
-    print("R/SYKDOMSPULS Finished without new data")
+    cat(sprintf("%s/%s/R/SYKDOMSPULS No new data",Sys.time(),Sys.getenv("COMPUTER")),"\n")
     return(FALSE)
   } else {
-    print("R/SYKDOMSPULS Updating data")
+    cat(sprintf("%s/%s/R/SYKDOMSPULS Updating data",Sys.time(),Sys.getenv("COMPUTER")),"\n")
     EmailNotificationOfNewData(files$id)
     for(i in 1:nrow(files)){
       if(!RAWmisc::IsFileStable(fhi::DashboardFolder("data_raw",files[i]$raw))){
-        print(paste0("R/SYKDOMSPULS Unstable file ",files[i]$raw))
+      	cat(sprintf("%s/%s/R/SYKDOMSPULS Unstable file %s",Sys.time(),Sys.getenv("COMPUTER"),files[i]$raw),"\n")
         return(FALSE)
       }
-      print(paste0("R/SYKDOMSPULS Cleaning file ",files[i]$id))
-      print(sprintf("R/SYKDOMSPULS sykdomspuls RUN Cleaning file %s",files[i]$id))
+      cat(sprintf("%s/%s/R/SYKDOMSPULS Cleaning file %s",Sys.time(),Sys.getenv("COMPUTER"),files[i]$raw),"\n")
       d <- fread(fhi::DashboardFolder("data_raw",files[i]$raw))
       d[,date:=data.table::as.IDate(date)]
 
@@ -364,7 +361,6 @@ UpdateData <- function(){
       municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
       GetPopulation(L=LU$L,U=LU$U, municip=municip)
 
-      print("R/SYKDOMSPULS legekontakt_everyone")
       res <- FormatData(d[Kontaktype=="Legekontakt"])
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_legekontakt_everyone.RDS")))
 
@@ -376,13 +372,12 @@ UpdateData <- function(){
       #res <- FormatData(d[Praksis=="Fastlege"])
       #saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_fastlege.RDS")))
 
-      print("R/SYKDOMSPULS everyone_everyone")
       res <- FormatData(d)
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_everyone.RDS")))
 
       file.create(fhi::DashboardFolder("data_clean",paste0("done_",files[i]$id,".txt")))
     }
-    print("R/SYKDOMSPULS New data now exists")
+    cat(sprintf("%s/%s/R/SYKDOMSPULS New data is now formatted and ready",Sys.time(),Sys.getenv("COMPUTER")),"\n")
     return(TRUE)
   }
 }
