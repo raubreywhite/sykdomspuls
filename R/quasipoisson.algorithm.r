@@ -118,14 +118,16 @@ QuasipoissonAlgorithm = function(
     if (i == 0) {
       break
     }
-    anscombe.res = anscombe.residuals(poisreg, dispersion_parameter)
-    anscombe.res[anscombe.res < 1] = 1 #Alt. 2.58?
-    dataset.training[, w_i := anscombe.res ^ (-2)] #The weight
-    Gamma = nrow(dataset.training) / sum(dataset.training$w_i)
-    dataset.training[, w_i := Gamma * w_i] #Makes sum(w_i) = n
-    poisreg = glm(regformula, data = dataset.training, weights = w_i, family = quasipoisson, na.action = na.omit)
-    dispersion_parameter = summary(poisreg)$dispersion
-    od <- max(1,sum(poisreg$weights * poisreg$residuals^2)/poisreg$df.r)
+    try({
+      anscombe.res = anscombe.residuals(poisreg, dispersion_parameter)
+      anscombe.res[anscombe.res < 1] = 1 #Alt. 2.58?
+      dataset.training[, w_i := anscombe.res ^ (-2)] #The weight
+      Gamma = nrow(dataset.training) / sum(dataset.training$w_i)
+      dataset.training[, w_i := Gamma * w_i] #Makes sum(w_i) = n
+      poisreg = glm(regformula, data = dataset.training, weights = w_i, family = quasipoisson, na.action = na.omit)
+      dispersion_parameter = summary(poisreg)$dispersion
+      od <- max(1,sum(poisreg$weights * poisreg$residuals^2)/poisreg$df.r)
+    },TRUE)
   }
 
   #CALCULATE SIGNAL THRESHOLD (prediction interval from Farrington 1996):
