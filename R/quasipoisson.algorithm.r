@@ -107,55 +107,75 @@ QuasipoissonAlgorithm = function(
     dataset.training = dataset.training[n < quantile(n,(1-remove.highcounts)),]
   }
   #FIT QUASI-POISSON REGRESSION MODEL ON THE TRAINING SET:
-  poisreg = glm(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
+  failed <- FALSE
+  tryCatch({
+    poisreg = glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
+  }, error=function(err){
+    failed <- TRUE
+  }, warning=function(warn){
+    failed <- TRUE
+  })
+  if(!poisreg$converged | failed){
+    dataset.test[, threshold0 := 0.0]
+    dataset.test[, threshold2 := 5.0]
+    dataset.test[, threshold4 := 10.0]
+    dataset.test[, threshold6 := 15.0]
+    dataset.test[, zscore := 0.0]
 
-  #REFIT THE REGRESSION USING RESIDUAL WEIGHTS (TO DOWNWEIGHT PREVIOUS OUTBREAKS):
-  w_i = rep(1,nrow(dataset.training))
-  dataset.training = cbind(dataset.training,w_i)
+    dataset.test[, cumE1 := 0.0]
+    dataset.test[, cumL1 := -5.0]
+    dataset.test[, cumU1 := 5.0]
+    dataset.test[, failed := TRUE]
+  } else {
+    #REFIT THE REGRESSION USING RESIDUAL WEIGHTS (TO DOWNWEIGHT PREVIOUS OUTBREAKS):
+    w_i = rep(1,nrow(dataset.training))
+    dataset.training = cbind(dataset.training,w_i)
 
-  for(i in sort(1:reweights)){
-    dispersion_parameter = summary(poisreg)$dispersion
-    if (i == 0) {
-      break
-    }
-    try({
-      anscombe.res = anscombe.residuals(poisreg, dispersion_parameter)
-      anscombe.res[anscombe.res < 1] = 1 #Alt. 2.58?
-      dataset.training[, w_i := anscombe.res ^ (-2)] #The weight
-      Gamma = nrow(dataset.training) / sum(dataset.training$w_i)
-      dataset.training[, w_i := Gamma * w_i] #Makes sum(w_i) = n
-      poisreg = glm(regformula, data = dataset.training, weights = w_i, family = quasipoisson, na.action = na.omit)
+    for(i in sort(1:reweights)){
       dispersion_parameter = summary(poisreg)$dispersion
-      od <- max(1,sum(poisreg$weights * poisreg$residuals^2)/poisreg$df.r)
-    },TRUE)
+      if (i == 0) {
+        break
+      }
+      try({
+        anscombe.res = anscombe.residuals(poisreg, dispersion_parameter)
+        anscombe.res[anscombe.res < 1] = 1 #Alt. 2.58?
+        dataset.training[, w_i := anscombe.res ^ (-2)] #The weight
+        Gamma = nrow(dataset.training) / sum(dataset.training$w_i)
+        dataset.training[, w_i := Gamma * w_i] #Makes sum(w_i) = n
+        poisreg = glm2::glm2(regformula, data = dataset.training, weights = w_i, family = quasipoisson, na.action = na.omit)
+        dispersion_parameter = summary(poisreg)$dispersion
+        od <- max(1,sum(poisreg$weights * poisreg$residuals^2)/poisreg$df.r)
+      },TRUE)
+    }
+
+    #CALCULATE SIGNAL THRESHOLD (prediction interval from Farrington 1996):
+    pred = predict(poisreg,type="response",se.fit=T,newdata=dataset.test)
+    dataset.test[, threshold0 := pred$fit]
+    dataset.test[, threshold2 := FarringtonThreshold(pred, phi=dispersion_parameter, z=2, skewness.transform="2/3")]
+    dataset.test[, threshold4 := FarringtonThreshold(pred, phi=dispersion_parameter, z=4, skewness.transform="2/3")]
+    dataset.test[, threshold6 := FarringtonThreshold(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3")]
+    dataset.test[, zscore := FarringtonZscore(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3", y = n)]
+
+    dataset.test[, stderr := FarringtonSEinGammaSpace(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3")]
+    dataset.test[, cumE1 := n^(2/3)-threshold0^(2/3)]
+    dataset.test[, cumL1 := (cumE1-2*stderr)^(3/2)]
+    dataset.test[, cumU1 := (cumE1+2*stderr)^(3/2)]
+    dataset.test[, cumE1 := cumE1^(3/2)]
+
+    dataset.test[, revcumE1 := threshold0^(2/3)-n^(2/3)]
+    dataset.test[, revcumL1 := (revcumE1-2*stderr)^(3/2)]
+    dataset.test[, revcumU1 := (revcumE1+2*stderr)^(3/2)]
+    dataset.test[, revcumE1 := revcumE1^(3/2)]
+
+    dataset.test[is.nan(cumE1), cumE1 := -revcumE1]
+    dataset.test[is.nan(cumL1), cumL1 := -revcumU1]
+    dataset.test[is.nan(cumU1), cumU1 := -revcumL1]
+    dataset.test[,revcumE1:=NULL]
+    dataset.test[,revcumL1:=NULL]
+    dataset.test[,revcumU1:=NULL]
+    dataset.test[,stderr:=NULL]
+    dataset.test[, failed := FALSE]
   }
-
-  #CALCULATE SIGNAL THRESHOLD (prediction interval from Farrington 1996):
-  pred = predict(poisreg,type="response",se.fit=T,newdata=dataset.test)
-  dataset.test[, threshold0 := pred$fit]
-  dataset.test[, threshold2 := FarringtonThreshold(pred, phi=dispersion_parameter, z=2, skewness.transform="2/3")]
-  dataset.test[, threshold4 := FarringtonThreshold(pred, phi=dispersion_parameter, z=4, skewness.transform="2/3")]
-  dataset.test[, threshold6 := FarringtonThreshold(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3")]
-  dataset.test[, zscore := FarringtonZscore(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3", y = n)]
-
-  dataset.test[, stderr := FarringtonSEinGammaSpace(pred, phi=dispersion_parameter, z=6, skewness.transform="2/3")]
-  dataset.test[, cumE1 := n^(2/3)-threshold0^(2/3)]
-  dataset.test[, cumL1 := (cumE1-2*stderr)^(3/2)]
-  dataset.test[, cumU1 := (cumE1+2*stderr)^(3/2)]
-  dataset.test[, cumE1 := cumE1^(3/2)]
-
-  dataset.test[, revcumE1 := threshold0^(2/3)-n^(2/3)]
-  dataset.test[, revcumL1 := (revcumE1-2*stderr)^(3/2)]
-  dataset.test[, revcumU1 := (revcumE1+2*stderr)^(3/2)]
-  dataset.test[, revcumE1 := revcumE1^(3/2)]
-
-  dataset.test[is.nan(cumE1), cumE1 := -revcumE1]
-  dataset.test[is.nan(cumL1), cumL1 := -revcumU1]
-  dataset.test[is.nan(cumU1), cumU1 := -revcumL1]
-  dataset.test[,revcumE1:=NULL]
-  dataset.test[,revcumL1:=NULL]
-  dataset.test[,revcumU1:=NULL]
-  dataset.test[,stderr:=NULL]
 
   if(isDaily){
     return(dataset.test[,c(variablesAlgorithmDaily,variablesAlgorithmBasic,variablesAlgorithmProduced),with=F])
