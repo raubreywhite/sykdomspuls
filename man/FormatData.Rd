@@ -4,8 +4,8 @@
 \alias{FormatData}
 \title{test}
 \usage{
-FormatData(d, population = readRDS(fhi::DashboardFolder("data_clean",
-  "pop.RDS")), hellidager = fread(system.file("extdata",
+FormatData(d, population = readRDS(system.file("extdata", "pop.RDS", package =
+  "sykdomspuls")), hellidager = fread(system.file("extdata",
   "DatoerMedHelligdager.txt", package = "sykdomspuls"))[, c("Dato",
   "HelligdagIndikator"), with = FALSE],
   testIfHelligdagIndikatorFileIsOutdated = TRUE)

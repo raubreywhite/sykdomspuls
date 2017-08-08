@@ -35,11 +35,14 @@ IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^p
   return(res)
 }
 
-#' test
+#' GetPopulation
+#' Mostly a function used by the package maintainer
+#' to generate new population files as necessary
 #' @param L a
 #' @param U a
 #' @param municip a
 #' @param saveFiles a
+#' @param yearsCopiedAtTail a
 #' @import fhi
 #' @import data.table
 #' @importFrom lubridate today
@@ -49,8 +52,9 @@ IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^p
 GetPopulation <- function(
   L=c(0,5,15,20,30,65),
   U=c(4,14,19,29,64,9999),
-  municip=c("0301"),
-  saveFiles=fhi::DashboardFolder("data_clean","pop.RDS")){
+  municip=stringr::str_extract(readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls"))$municip,"[0-9][0-9][0-9][0-9]$"),
+  saveFiles=file.path("/packages","dashboards_sykdomspuls","inst","extdata","pop.RDS"),
+  yearsCopiedAtTail=5){
 
   municip <- municip[nchar(municip)==4 & municip!="9999"]
   ages <- c(formatC(0:104,width=3,flag="0"), "105+")
@@ -61,9 +65,10 @@ GetPopulation <- function(
   }
   years <- as.character(c((data.table::year(lubridate::today())-15):lastYear))
 
-  retval <- vector("list",length(years)+2)
+  retval <- vector("list",length(years)+yearsCopiedAtTail)
   for(i in 1:length(years)){
     useYear <- years[i]
+    print(useYear)
 
     b <- paste0('
   {
@@ -150,9 +155,13 @@ GetPopulation <- function(
     res <- rbind(res,x)
     res[,year:=as.character(year)]
 
-    retval[[i]] <- res
+    retval[[i]] <- copy(res)
   }
-  SaveData(retval,saveFiles)
+  for(j in 1:yearsCopiedAtTail){
+    res[,year:=as.character(as.numeric(year)+1)]
+    retval[[i+j]] <- copy(res)
+  }
+  saveRDS(retval,saveFiles)
 }
 
 #' test
@@ -164,7 +173,7 @@ GetPopulation <- function(
 #' @importFrom lubridate today
 #' @export FormatData
 FormatData <- function(d,
-                       population=readRDS(fhi::DashboardFolder("data_clean","pop.RDS")),
+                       population=readRDS(system.file("extdata", "pop.RDS", package = "sykdomspuls")),
                        hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE],
                        testIfHelligdagIndikatorFileIsOutdated=TRUE){
   if(! "IDate" %in% class(d$date)){
@@ -359,7 +368,7 @@ UpdateData <- function(){
       LU <- GetAgesLU(ageStrings=unique(d$age))
       municip <- unique(norwayMunicipMerging$municip)
       municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
-      GetPopulation(L=LU$L,U=LU$U, municip=municip)
+      #GetPopulation(L=LU$L,U=LU$U, municip=municip)
 
       res <- FormatData(d[Kontaktype=="Legekontakt"])
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_legekontakt_everyone.RDS")))
