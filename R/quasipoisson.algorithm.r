@@ -9,6 +9,7 @@
 #' @param sign.level a
 #' @param isDaily a
 #' @param v a
+#' @importFrom glm2 glm2
 #' @import data.table
 #' @import stringr
 #' @import stats
@@ -110,12 +111,13 @@ QuasipoissonAlgorithm = function(
   failed <- FALSE
   tryCatch({
     poisreg = glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
+    if(!poisreg$converged) failed <- TRUE
   }, error=function(err){
     failed <- TRUE
   }, warning=function(warn){
     failed <- TRUE
   })
-  if(!poisreg$converged | failed){
+  if(failed){
     dataset.test[, threshold0 := 0.0]
     dataset.test[, threshold2 := 5.0]
     dataset.test[, threshold4 := 10.0]
