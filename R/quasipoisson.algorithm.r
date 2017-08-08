@@ -107,16 +107,19 @@ QuasipoissonAlgorithm = function(
   if(remove.highcounts>0){
     dataset.training = dataset.training[n < quantile(n,(1-remove.highcounts)),]
   }
+  
   #FIT QUASI-POISSON REGRESSION MODEL ON THE TRAINING SET:
-  failed <- FALSE
-  tryCatch({
-    poisreg = glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
-    if(!poisreg$converged) failed <- TRUE
-  }, error=function(err){
-    failed <- TRUE
-  }, warning=function(warn){
-    failed <- TRUE
-  })
+  normalFunction <- function(regformula, dataset.training){
+    fit <- glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
+    return(list(value=val, failed=!fit$converged))
+  }
+  exceptionalFunction <- function(err){
+    return(list(value=NaN, failed=FALSE))
+  }
+  retval <- tryCatch(normalFunction(regformula, dataset.training), error=exceptionalFunction, warning=exceptionalFunction)
+  poisreg <- retval$val
+  failed <- retval$failed
+  
   if(failed){
     dataset.test[, threshold0 := 0.0]
     dataset.test[, threshold2 := 5.0]

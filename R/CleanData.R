@@ -365,9 +365,9 @@ UpdateData <- function(){
       d <- fread(fhi::DashboardFolder("data_raw",files[i]$raw))
       d[,date:=data.table::as.IDate(date)]
 
-      LU <- GetAgesLU(ageStrings=unique(d$age))
-      municip <- unique(norwayMunicipMerging$municip)
-      municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
+      #LU <- GetAgesLU(ageStrings=unique(d$age))
+      #municip <- unique(norwayMunicipMerging$municip)
+      #municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
       #GetPopulation(L=LU$L,U=LU$U, municip=municip)
 
       res <- FormatData(d[Kontaktype=="Legekontakt"])
