@@ -111,16 +111,14 @@ QuasipoissonAlgorithm = function(
   #FIT QUASI-POISSON REGRESSION MODEL ON THE TRAINING SET:
   normalFunction <- function(regformula, dataset.training){
     fit <- glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
-    return(list(value=val, failed=!fit$converged))
+    return(list(fit=fit, failed=!fit$converged))
   }
   exceptionalFunction <- function(err){
-    return(list(value=NaN, failed=FALSE))
+    return(list(fit=NaN, failed=FALSE))
   }
-  retval <- tryCatch(normalFunction(regformula, dataset.training), error=exceptionalFunction, warning=exceptionalFunction)
-  poisreg <- retval$val
-  failed <- retval$failed
+  poisreg <- tryCatch(normalFunction(regformula, dataset.training), error=exceptionalFunction, warning=exceptionalFunction)
   
-  if(failed){
+  if(poisreg$failed){
     dataset.test[, threshold0 := 0.0]
     dataset.test[, threshold2 := 5.0]
     dataset.test[, threshold4 := 10.0]
@@ -137,24 +135,24 @@ QuasipoissonAlgorithm = function(
     dataset.training = cbind(dataset.training,w_i)
 
     for(i in sort(1:reweights)){
-      dispersion_parameter = summary(poisreg)$dispersion
+      dispersion_parameter = summary(poisreg$fit)$dispersion
       if (i == 0) {
         break
       }
       try({
-        anscombe.res = anscombe.residuals(poisreg, dispersion_parameter)
+        anscombe.res = anscombe.residuals(poisreg$fit, dispersion_parameter)
         anscombe.res[anscombe.res < 1] = 1 #Alt. 2.58?
         dataset.training[, w_i := anscombe.res ^ (-2)] #The weight
         Gamma = nrow(dataset.training) / sum(dataset.training$w_i)
         dataset.training[, w_i := Gamma * w_i] #Makes sum(w_i) = n
-        poisreg = glm2::glm2(regformula, data = dataset.training, weights = w_i, family = quasipoisson, na.action = na.omit)
-        dispersion_parameter = summary(poisreg)$dispersion
-        od <- max(1,sum(poisreg$weights * poisreg$residuals^2)/poisreg$df.r)
+        poisreg$fit = glm2::glm2(regformula, data = dataset.training, weights = w_i, family = quasipoisson, na.action = na.omit)
+        dispersion_parameter = summary(poisreg$fit)$dispersion
+        od <- max(1,sum(poisreg$fit$weights * poisreg$fit$residuals^2)/poisreg$fit$df.r)
       },TRUE)
     }
 
     #CALCULATE SIGNAL THRESHOLD (prediction interval from Farrington 1996):
-    pred = predict(poisreg,type="response",se.fit=T,newdata=dataset.test)
+    pred = predict(poisreg$fit,type="response",se.fit=T,newdata=dataset.test)
     dataset.test[, threshold0 := pred$fit]
     dataset.test[, threshold2 := FarringtonThreshold(pred, phi=dispersion_parameter, z=2, skewness.transform="2/3")]
     dataset.test[, threshold4 := FarringtonThreshold(pred, phi=dispersion_parameter, z=4, skewness.transform="2/3")]
