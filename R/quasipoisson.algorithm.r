@@ -114,7 +114,7 @@ QuasipoissonAlgorithm = function(
     return(list(fit=fit, failed=!fit$converged))
   }
   exceptionalFunction <- function(err){
-    return(list(fit=NaN, failed=FALSE))
+    return(list(fit=NaN, failed=TRUE))
   }
   poisreg <- tryCatch(normalFunction(regformula, dataset.training), error=exceptionalFunction, warning=exceptionalFunction)
   
