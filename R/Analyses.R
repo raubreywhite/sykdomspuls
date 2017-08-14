@@ -72,8 +72,8 @@ RunOneAnalysis <- function(analysesStack,analysisData){
   retval[, locationName := GetLocationName(analysesStack$location, norwayLocations=norwayLocations)]
 
   retval[, status := "Normal"]
-  retval[n > threshold2, status := "Medium"]
-  retval[n > threshold4, status := "High"]
+  retval[n > 1 & n > threshold2, status := "Medium"]
+  retval[n > 1 & n > threshold4, status := "High"]
   return(retval)
 }
 
