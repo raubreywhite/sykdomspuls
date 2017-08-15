@@ -77,6 +77,7 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
 EmailNotificationKommuneLeger <- function(){
 
   emailText <- "
+  Nye resultater vises p\u00E5 websiden om ca. 10 min.<br><br>
   Innlogging:<br>
   Webadresse: <a href='http://sykdomspulsen.fhi.no/lege123/'>http://sykdomspulsen.fhi.no/lege123/</a><br>
   Det er ikke noe brukernavn eller passord, du kommer direkte inn p\u00E5 nettsiden og den er klar til bruk.<br>
