@@ -2,7 +2,7 @@
 % Please edit documentation in R/BayesianQuasipoissonAlgorithm.r
 \name{BayesianQuasipoissonAlgorithm}
 \alias{BayesianQuasipoissonAlgorithm}
-\title{test}
+\title{THIS DOES NOT WORK}
 \usage{
 BayesianQuasipoissonAlgorithm(dataset, predinterval = 30,
   historical.data.years = 5, mod.pred.window = 90, reweights = 1,
@@ -31,5 +31,5 @@ BayesianQuasipoissonAlgorithm(dataset, predinterval = 30,
 \item{v}{a}
 }
 \description{
-test
+THIS DOES NOT WORK
 }
