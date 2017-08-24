@@ -22,8 +22,7 @@ Imports:
   httr,
   jsonlite,
   zoo,
-  RAWmisc,
-  rstanarm
+  RAWmisc
 Suggests: testthat
 Remotes: raubreywhite/RAWmisc, raubreywhite/fhi
 License: GPL-3

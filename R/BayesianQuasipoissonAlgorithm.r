@@ -1,4 +1,4 @@
-#' test
+#' THIS DOES NOT WORK
 #' @param dataset a
 #' @param predinterval a
 #' @param historical.data.years a
@@ -10,11 +10,9 @@
 #' @param isDaily a
 #' @param v a
 #' @importFrom glm2 glm2
-#' @import rstanarm
 #' @import data.table
 #' @import stringr
 #' @import stats
-#' @export BayesianQuasipoissonAlgorithm
 BayesianQuasipoissonAlgorithm = function(
   dataset,
   predinterval=30,
@@ -112,11 +110,11 @@ BayesianQuasipoissonAlgorithm = function(
 
   #FIT QUASI-POISSON REGRESSION MODEL ON THE TRAINING SET:
   normalFunction <- function(regformula, dataset.training){
-    fit <- rstanarm::stan_glm(regformula,
-                              data=dataset.training,
-                              family=rstanarm::neg_binomial_2,
-                              prior = rstanarm::normal(0,2.5), prior_intercept = rstanarm::normal(0,5),
-                              chains = 4, cores = 4, seed = 4)
+    #fit <- rstanarm::stan_glm(regformula,
+    #                          data=dataset.training,
+    #                          family=rstanarm::neg_binomial_2,
+    #                          prior = rstanarm::normal(0,2.5), prior_intercept = rstanarm::normal(0,5),
+    #                          chains = 4, cores = 4, seed = 4)
     fit1 <- glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
     return(list(fit=fit, failed=!fit$converged))
   }
