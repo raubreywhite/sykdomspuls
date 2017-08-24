@@ -5,7 +5,7 @@
 #' @export CheckForOutbreaksUtbrudd
 CheckForOutbreaksUtbrudd <- function(resYearLine=readRDS(fhi::DashboardFolder("results","resYearLine.RDS"))){
   currentWeek <- max(resYearLine$wkyr)
-  #currentWeek <- "2006-13"
+
   resYearLine[,statusNum0:=0]
   resYearLine[status=="Medium",statusNum0:=1]
   resYearLine[status=="High",statusNum0:=2]
@@ -26,29 +26,44 @@ CheckForOutbreaksUtbrudd <- function(resYearLine=readRDS(fhi::DashboardFolder("r
 
   outbreaksGastro <- unique(outbreaks[wkyr==currentWeek & type=="gastro"]$locationName)
   outbreaksRespiratory <- unique(outbreaks[wkyr==currentWeek & type=="respiratory"]$locationName)
+  outbreaksInfluensa <- unique(outbreaks[wkyr==currentWeek & type=="influensa"]$locationName)
 
-  if(length(outbreaksGastro)>0 | length(outbreaksRespiratory)>0){
+  if(length(outbreaksGastro)>0 | length(outbreaksRespiratory)>0 | length(outbreaksInfluensa)>0){
     outbreaksGastro <- paste0(outbreaksGastro,collapse=", ")
     outbreaksRespiratory <- paste0(outbreaksRespiratory,collapse=", ")
+    outbreaksInfluensa <- paste0(outbreaksInfluensa,collapse=", ")
     if(outbreaksGastro=="") outbreaksGastro <- "Ingen"
     if(outbreaksRespiratory=="") outbreaksRespiratory <- "Ingen"
+    if(outbreaksInfluensa=="") outbreaksInfluensa <- "Ingen"
 
     emailText <- sprintf("
+OBS-Varsel fra Sykdomspulsen uke %s:
+<br><br>
+OBS varslet er basert p\u00E5 oversiktsbildet for de siste ukene for mage-tarminfeksjoner, luftveisinfeksjoner, og influensa.<br>
+Det blir generert et varsel dersom:<br>
+- Et eller flere av fylkene har r\u00F8d farge en av de to siste ukene<br>
+- Et eller flere av fylkene har gul farge to av de tre siste ukene
+<br><br>
+Ved OBS varsel b\u00F8r mottaksansvarlig melde ifra til fagansvarlig i riktig avdeling.
+<br><br>
+<br><br>
+Mage-tarminfeksjoner:
+<br>
+%s
+<br><br>
+Luftveisinfeksjoner:
+<br>
+%s
+<br><br>
+Influensa:
+<br>
+%s
 
-                         De f\u00F8lgende trenger oppf\u00F8lging for uke %s:
-                         <br><br>
-                         Mage-tarm diagnose:
-                         <br>
-                         %s
-                         <br><br>
-                         \u00D8vre-luftvei diagnose:
-                         <br>
-                         %s
-                         ",currentWeek,outbreaksGastro,outbreaksRespiratory)
+",currentWeek,outbreaksGastro,outbreaksRespiratory,outbreaksInfluensa)
 
     if(Sys.getenv("COMPUTER")=="smhb"){
       fhi::DashboardEmail("sykdomspuls_utbrudd",
-                              "OBS-Varsel om Sykdomspulsen signaler",
+                              sprintf("OBS-Varsel fra Sykdomspulsen uke %s",currentWeek),
                               emailText)
     }
   }

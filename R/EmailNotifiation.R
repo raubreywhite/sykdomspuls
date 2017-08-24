@@ -77,11 +77,17 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
 EmailNotificationKommuneLeger <- function(){
 
   emailText <- "
+  <b>Ny funksjon for oversikt-siden</b><br>
+  Etter tilbakemelding fra en av pilotbrukerne har vi forbedret funksjonen p\u00E5 oversikt-siden.
+  N\u00E5 er det mulig \u00E5 klikke p\u00E5 feltene i diagrammet p\u00E5 oversikt-siden.
+  Du vil da komme direkte til ukentlig-siden der grafen vil vise samme sykdom/symptom, kommune og aldersgruppe som du klikket p\u00E5.
+  <br><br>
+  Pilotprosjektet Sykdomspulsen til kommunehelsetjenesten er oppdatert med nye tall<br>
   Nye resultater vises p\u00E5 websiden om ca. 10 min.<br><br>
   Innlogging:<br>
   Webadresse: <a href='http://sykdomspulsen.fhi.no/lege123/'>http://sykdomspulsen.fhi.no/lege123/</a><br>
   Det er ikke noe brukernavn eller passord, du kommer direkte inn p\u00E5 nettsiden og den er klar til bruk.<br>
-  NB! Bruk Google Chrome n\u00E5r du logger deg inn!<br>
+  Bruk Google Chrome n\u00E5r du logger deg inn.<br><br>
   NB! Dette er et pilotprosjekt. Du f\u00E5r n\u00E5 mulighet til \u00E5 bruke websiden n\u00E5r du vil og s\u00E5 mye du vil.<br>
   Du kan ogs\u00E5 vise enkeltsider av websiden til andre som jobber innenfor kommunehelsetjenesten.<br>
   MEN vi ber om at du ikke distribuerer webadressen til andre, hverken til ansatte i kommunehelsetjenesten eller utenfor.<br>
@@ -95,13 +101,19 @@ EmailNotificationKommuneLeger <- function(){
   <br><br>
   Hilsen:<br>
   Sykdomspulsen ved Folkehelseinstituttet<br>
-  v/Gry M Gr\u00F8neng (prosjektleder) og Richard White (statistiker og webansvarlig)
+  v/Gry M Gr\u00F8neng (prosjektleder) og Richard White (statistiker og webansvarlig)<br><br><br>
   "
 
   if(Sys.getenv("COMPUTER")=="smhb"){
     fhi::DashboardEmail("sykdomspuls_kommuneleger",
-                        "Pilotprosjektet Sykdomspulsen til kommunehelsetjenesten er n\u00E5 oppdatert med nye tall",
-                        emailText)
+                        "Pilotprosjektet Sykdomspulsen til kommunehelsetjenesten er oppdatert med nye tall",
+                        emailText,
+                        emailFooter=FALSE)
+  } else if(Sys.getenv("COMPUTER")=="test"){
+    fhi::DashboardEmail("test",
+                        "Pilotprosjektet Sykdomspulsen til kommunehelsetjenesten er oppdatert med nye tall",
+                        emailText,
+                        emailFooter=FALSE)
   }
 }
 
