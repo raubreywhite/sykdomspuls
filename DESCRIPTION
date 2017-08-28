@@ -1,8 +1,8 @@
 Package: sykdomspuls
-Title: What the Package Does (one line, title case)
+Title: Norwegian Syndromic Surveillance System - NorSySS
 Version: 0.0.2
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Richard", "White", email = "w@rwhite.no", role = c("aut", "cre"))
+Description: https://www.fhi.no/en/hn/statistics/NorSySS/.
 Depends: R (>= 3.4.0)
 Imports:
   glm2,
