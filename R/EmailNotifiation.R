@@ -77,11 +77,6 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
 EmailNotificationKommuneLeger <- function(){
 
   emailText <- "
-  <b>Ny funksjon for oversikt-siden</b><br>
-  Etter tilbakemelding fra en av pilotbrukerne har vi forbedret funksjonen p\u00E5 oversikt-siden.
-  N\u00E5 er det mulig \u00E5 klikke p\u00E5 feltene i diagrammet p\u00E5 oversikt-siden.
-  Du vil da komme direkte til ukentlig-siden der grafen vil vise samme sykdom/symptom, kommune og aldersgruppe som du klikket p\u00E5.
-  <br><br>
   Pilotprosjektet Sykdomspulsen til kommunehelsetjenesten er oppdatert med nye tall<br>
   Nye resultater vises p\u00E5 websiden om ca. 10 min.<br><br>
   Innlogging:<br>
@@ -98,6 +93,11 @@ EmailNotificationKommuneLeger <- function(){
   <br><br>
   Dersom du har problemer med websiden, forslag til forbedringer, ris eller ros kan du sende oss en mail: sykdomspulsen@fhi.no<br>
   Dersom du ikke \u00F8nsker \u00E5 f\u00E5 denne e-posten n\u00E5r vi oppdaterer Sykdomspulsen med nye tall s\u00E5 kan du gi oss beskjed ved \u00E5 sende en mail til adressen over.
+  <br><br>
+  <b>Ny funksjon for oversikt-siden</b><br>
+  Etter tilbakemelding fra en av pilotbrukerne har vi forbedret funksjonen p\u00E5 oversikt-siden.
+  N\u00E5 er det mulig \u00E5 klikke p\u00E5 feltene i diagrammet p\u00E5 oversikt-siden.
+  Du vil da komme direkte til ukentlig-siden der grafen vil vise samme sykdom/symptom, kommune og aldersgruppe som du klikket p\u00E5.
   <br><br>
   Hilsen:<br>
   Sykdomspulsen ved Folkehelseinstituttet<br>
