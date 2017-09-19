@@ -58,7 +58,8 @@ Luftveisinfeksjoner:
 Influensa:
 <br>
 %s
-
+<br><br>
+  Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
 ",currentWeek,outbreaksGastro,outbreaksRespiratory,outbreaksInfluensa)
 
     if(Sys.getenv("COMPUTER")=="smhb"){

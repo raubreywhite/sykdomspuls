@@ -58,6 +58,8 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
   Se p\u00E5 oversiktsbilde for de siste ukene for b\u00E5de mage-tarminfeksjoner og \u00F8vre luftveisinfeksjoner og meld ifra til fagansvarlig dersom:<br>
   - Et eller flere av fylkene har r\u00F8d farge en av de to siste ukene<br>
   - Et eller flere av fylkene har gul farge to av de tre siste ukene
+  <br><br>
+  Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
   "
 
   if(Sys.getenv("COMPUTER")=="smhb" & sendEmail){
