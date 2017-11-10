@@ -4,13 +4,33 @@
 #' @import data.table
 #' @export AnalyseYearLine
 AnalyseYearLine <- function(data,  v) {
+  yearMax <- as.numeric(format.Date(max(data$date),"%G"))
+  yearMin <- as.numeric(format.Date(min(data$date),"%G"))
 
   dataset <- data[, .(n = sum(value),
                       consult = sum(consult),
                       pop = sum(pop),
                       HelligdagIndikator=mean(HelligdagIndikator)), by = .(date)]
 
-  res <- QuasipoissonAlgorithm(dataset, predinterval=8*7, isDaily=FALSE, v=v)
+  res <- vector("list",length=yearMax)
+  for(y in yearMin:yearMax){
+    if(y<=(yearMin+4)){
+      dateTrainMin <- sprintf("%s-01-01",yearMin)
+      dateTrainMax <- sprintf("%s-12-31",yearMin+4)
+    } else {
+      dateTrainMin <- sprintf("%s-01-01",y-5)
+      dateTrainMax <- sprintf("%s-12-31",y-1)
+    }
+
+    datePredictMin <- sprintf("%s-01-01",y)
+    datePredictMax <- sprintf("%s-12-31",y)
+
+    res[[y]] <- QuasipoissonTrainPredictData(
+      datasetTrain=dataset[date >= dateTrainMin & date <= dateTrainMax],
+      datasetPredict=dataset[date >= datePredictMin & date <= datePredictMax],
+      isDaily=F, v=v)
+  }
+  res <- rbindlist(res)
   res <- res[!is.na(threshold2)]
 
   res[week>=30,x:=week-29]
@@ -31,12 +51,35 @@ AnalyseYearLine <- function(data,  v) {
 #' @import data.table
 #' @export AnalyseRecentLine
 AnalyseRecentLine <- function(data, v) {
+  yearMax <- as.numeric(format.Date(max(data$date),"%G"))
+  yearMin <- as.numeric(format.Date(min(data$date),"%G"))
+
   dataset <- data[, .(n = sum(value),
                                       consult = sum(consult),
                                       pop = sum(pop),
                                       HelligdagIndikator=mean(HelligdagIndikator)), by = .(date)]
 
-  res <- QuasipoissonAlgorithm(dataset, predinterval = 28*2, isDaily=TRUE, v=v)
+  res <- vector("list",length=yearMax)
+  for(y in yearMin:yearMax){
+    if(y<=(yearMin+4)){
+      dateTrainMin <- sprintf("%s-01-01",yearMin)
+      dateTrainMax <- sprintf("%s-12-31",yearMin+4)
+    } else {
+      dateTrainMin <- sprintf("%s-01-01",y-5)
+      dateTrainMax <- sprintf("%s-12-31",y-1)
+    }
+
+    datePredictMin <- sprintf("%s-01-01",y)
+    datePredictMax <- sprintf("%s-12-31",y)
+
+    res[[y]] <- QuasipoissonTrainPredictData(
+      datasetTrain=dataset[date >= dateTrainMin & date <= dateTrainMax],
+      datasetPredict=dataset[date >= datePredictMin & date <= datePredictMax],
+      isDaily=T, v=v)
+  }
+  res <- rbindlist(res)
+  res <- res[!is.na(threshold2)]
+
   res <- res[,c(variablesAlgorithmDaily, variablesAlgorithmBasic, variablesAlgorithmProduced),with=F]
 
   return(res)

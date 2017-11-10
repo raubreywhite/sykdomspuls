@@ -10,7 +10,9 @@ test_that("Sandefjord significantByThreshold vs significantByConfidenceIntervals
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
   setnames(d,"influensa","n")
   setnames(d,"consultWithInfluensa","consult")
-  res <- QuasipoissonAlgorithm(dataset=d,isDaily=F)
+  res <- QuasipoissonTrainPredictData(datasetTrain=d,
+                                      datasetPredict=d,
+                                      isDaily=F)
 
   significantByThreshold <- res[n>threshold2]
   significantByConfidenceIntervals <- res[cumL1>0]
@@ -27,10 +29,86 @@ test_that("Sandefjord significantByThreshold vs significantByZScore", {
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
   setnames(d,"influensa","n")
   setnames(d,"consultWithInfluensa","consult")
-  res <- QuasipoissonAlgorithm(dataset=d,isDaily=F)
+  res <- QuasipoissonTrainPredictData(datasetTrain=d,
+                               datasetPredict=d,
+                               isDaily=F)
 
   significantByThreshold <- res[n>threshold2]
   significantByZScore <- res[zscore>2]
   expect_equal(significantByThreshold,significantByZScore)
 })
 
+
+test_that("Sandefjord weekly - restrict datasetTrain vs not", {
+  library(data.table)
+  if(interactive()){
+    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+  } else {
+    BASE <- getwd()
+  }
+  d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
+  setnames(d,"influensa","n")
+  setnames(d,"consultWithInfluensa","consult")
+
+  resAll <- QuasipoissonTrainPredictData(
+    datasetTrain=d,
+    datasetPredict=d[date>="2017-01-01"],
+    isDaily=F)
+
+  resRestricted <- QuasipoissonTrainPredictData(
+    datasetTrain=d[date<="2017-01-01"],
+    datasetPredict=d[date>="2017-01-01"],
+    isDaily=F)
+
+  expect_false(isTRUE(all.equal(resAll, resRestricted)))
+})
+
+test_that("Sandefjord daily - restrict datasetTrain vs not", {
+  library(data.table)
+  if(interactive()){
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
+  } else {
+    BASE <- getwd()
+  }
+  d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
+  setnames(d,"influensa","n")
+  setnames(d,"consultWithInfluensa","consult")
+
+  resAll <- QuasipoissonTrainPredictData(
+    datasetTrain=d,
+    datasetPredict=d[date>="2017-01-01"],
+    isDaily=T)
+
+  resRestricted <- QuasipoissonTrainPredictData(
+    datasetTrain=d[date<="2017-01-01"],
+    datasetPredict=d[date>="2017-01-01"],
+    isDaily=T)
+
+  expect_false(isTRUE(all.equal(resAll, resRestricted)))
+})
+
+test_that("Sandefjord daily - restrict datasetPredict vs not", {
+  library(data.table)
+  if(interactive()){
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
+  } else {
+    BASE <- getwd()
+  }
+  d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
+  setnames(d,"influensa","n")
+  setnames(d,"consultWithInfluensa","consult")
+
+  resAll <- QuasipoissonTrainPredictData(
+    datasetTrain=d,
+    datasetPredict=d,
+    isDaily=T)
+
+  resRestricted <- QuasipoissonTrainPredictData(
+    datasetTrain=d,
+    datasetPredict=d[date>="2017-01-01"],
+    isDaily=T)
+
+  resAll <- resAll[date %in% resRestricted$date]
+
+  expect_equal(resAll, resRestricted)
+})
