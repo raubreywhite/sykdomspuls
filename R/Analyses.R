@@ -1,4 +1,48 @@
 #' PROJ
+#' @param yearMin a
+#' @param yearMax a
+#' @param numPerYear1 a
+#' @export CalculateTrainPredictYearPattern
+CalculateTrainPredictYearPattern <- function(yearMin,yearMax,numPerYear1=1){
+  perYear1 <- seq(yearMax-numPerYear1+1,yearMax,by=1)
+  perYear2 <- c((yearMin+6):(yearMax-numPerYear1))
+  perFixed <- c(yearMin:(yearMin+5))
+  if(length(perYear2)%%2==1){
+    perYear1 <- c(max(perYear2),perYear1)
+    perYear2 <- perYear2[-length(perYear2)]
+  }
+
+  years <- list()
+  years[[1]] <- list(
+    yearTrainMin=min(perFixed),
+    yearTrainMax=max(perFixed-1),
+    yearPredictMin=min(perFixed),
+    yearPredictMax=max(perFixed)
+  )
+  index <- 2
+  for(i in 1:length(perYear2)){
+    if(i%%2==0) next
+    years[[index]] <- list(
+      yearTrainMin=perYear2[i]-5,
+      yearTrainMax=perYear2[i]-1,
+      yearPredictMin=perYear2[i],
+      yearPredictMax=perYear2[i]+1
+    )
+    index <- index + 1
+  }
+  for(i in 1:length(perYear1)){
+    years[[index]] <- list(
+      yearTrainMin=perYear1[i]-5,
+      yearTrainMax=perYear1[i]-1,
+      yearPredictMin=perYear1[i],
+      yearPredictMax=perYear1[i]
+    )
+    index <- index + 1
+  }
+  return(years)
+}
+
+#' PROJ
 #' @param data a
 #' @param v a
 #' @import data.table
@@ -12,20 +56,17 @@ AnalyseYearLine <- function(data,  v) {
                       pop = sum(pop),
                       HelligdagIndikator=mean(HelligdagIndikator)), by = .(date)]
 
-  res <- vector("list",length=yearMax)
-  for(y in yearMin:yearMax){
-    if(y<=(yearMin+4)){
-      dateTrainMin <- sprintf("%s-01-01",yearMin)
-      dateTrainMax <- sprintf("%s-12-31",yearMin+4)
-    } else {
-      dateTrainMin <- sprintf("%s-01-01",y-5)
-      dateTrainMax <- sprintf("%s-12-31",y-1)
-    }
+  years <- CalculateTrainPredictYearPattern(yearMin=yearMin, yearMax=yearMax, numPerYear1=1)
+  res <- vector("list",length=length(years))
 
-    datePredictMin <- sprintf("%s-01-01",y)
-    datePredictMax <- sprintf("%s-12-31",y)
+  for(i in 1:length(years)){
+    dateTrainMin <- sprintf("%s-01-01",years[[i]]$yearTrainMin)
+    dateTrainMax <- sprintf("%s-12-31",years[[i]]$yearTrainMax)
 
-    res[[y]] <- QuasipoissonTrainPredictData(
+    datePredictMin <- sprintf("%s-01-01",years[[i]]$yearPredictMin)
+    datePredictMax <- sprintf("%s-12-31",years[[i]]$yearPredictMax)
+
+    res[[i]] <- QuasipoissonTrainPredictData(
       datasetTrain=dataset[date >= dateTrainMin & date <= dateTrainMax],
       datasetPredict=dataset[date >= datePredictMin & date <= datePredictMax],
       isDaily=F, v=v)
@@ -59,20 +100,17 @@ AnalyseRecentLine <- function(data, v) {
                                       pop = sum(pop),
                                       HelligdagIndikator=mean(HelligdagIndikator)), by = .(date)]
 
-  res <- vector("list",length=yearMax)
-  for(y in yearMin:yearMax){
-    if(y<=(yearMin+4)){
-      dateTrainMin <- sprintf("%s-01-01",yearMin)
-      dateTrainMax <- sprintf("%s-12-31",yearMin+4)
-    } else {
-      dateTrainMin <- sprintf("%s-01-01",y-5)
-      dateTrainMax <- sprintf("%s-12-31",y-1)
-    }
+  years <- CalculateTrainPredictYearPattern(yearMin=yearMin, yearMax=yearMax, numPerYear1=1)
+  res <- vector("list",length=length(years))
 
-    datePredictMin <- sprintf("%s-01-01",y)
-    datePredictMax <- sprintf("%s-12-31",y)
+  for(i in 1:length(years)){
+    dateTrainMin <- sprintf("%s-01-01",years[[i]]$yearTrainMin)
+    dateTrainMax <- sprintf("%s-12-31",years[[i]]$yearTrainMax)
 
-    res[[y]] <- QuasipoissonTrainPredictData(
+    datePredictMin <- sprintf("%s-01-01",years[[i]]$yearPredictMin)
+    datePredictMax <- sprintf("%s-12-31",years[[i]]$yearPredictMax)
+
+    res[[i]] <- QuasipoissonTrainPredictData(
       datasetTrain=dataset[date >= dateTrainMin & date <= dateTrainMax],
       datasetPredict=dataset[date >= datePredictMin & date <= datePredictMax],
       isDaily=T, v=v)

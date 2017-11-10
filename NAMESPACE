@@ -3,6 +3,7 @@
 export(AnalyseRecentLine)
 export(AnalyseYearLine)
 export(CONFIG)
+export(CalculateTrainPredictYearPattern)
 export(CheckForOutbreaksUtbrudd)
 export(CreateLatestDoneFile)
 export(DeleteLatestDoneFile)
