@@ -11,7 +11,8 @@ LatestDatasets <- function(clean=list.files(fhi::DashboardFolder("data_clean"),"
     "everyone_everyone"=paste0(clean,"_cleaned_everyone_everyone.RDS"),
     "everyone_fastlege"=paste0(clean,"_cleaned_everyone_fastlege.RDS"),
     "legekontakt_everyone"=paste0(clean,"_cleaned_legekontakt_everyone.RDS"),
-    "legekontakt_fastlege"=paste0(clean,"_cleaned_legekontakt_fastlege.RDS")
+    "legekontakt_fastlege"=paste0(clean,"_cleaned_legekontakt_fastlege.RDS"),
+    "date"=clean
   ))
 }
 
