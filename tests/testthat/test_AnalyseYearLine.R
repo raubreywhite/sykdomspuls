@@ -3,7 +3,7 @@ context("AnalyseYearLine")
 test_that("Sandefjord significantByThreshold vs significantByConfidenceIntervals", {
   library(data.table)
   if(interactive()){
-    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
+    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
   } else {
     BASE <- getwd()
   }

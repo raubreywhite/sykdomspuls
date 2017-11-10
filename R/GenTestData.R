@@ -54,4 +54,27 @@ GenTestData <- function(){
 
   saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/data/formatted_oslo.RDS")
 
+  set.seed(4)
+  d <- fread("/data_raw/sykdomspuls/partially_formatted_2017_08_08.txt")
+  d <- d[municip %in% c("municip1711")]
+  population <- readRDS(file.path("/packages/dashboards_sykdomspuls/tests/testthat","data","pop.RDS"))
+  for(i in 1:length(population)){
+    if(!is.null(population[[i]])) population[[i]] <- population[[i]][municip %in% unique(d$municip)]
+  }
+  hellidager=readRDS(file.path("/packages/dashboards_sykdomspuls/tests/testthat","data","hellidager.RDS"))
+
+  res <- sykdomspuls::FormatData(d,
+                                 population=population,
+                                 hellidager=hellidager,
+                                 testIfHelligdagIndikatorFileIsOutdated=FALSE)
+  res <- res[age=="Totalt"]
+  res[,influensa:=0]
+  res[,gastro:=gastro+sample(c(-5:5),.N,replace=T)]
+  res[gastro<0,gastro:=0]
+  res[,respiratory:=0]
+  res[,consultWithInfluensa:=0]
+  res[,consultWithoutInfluensa:=consultWithoutInfluensa+sample(c(-5:5),.N,replace=T)]
+
+  saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/data/formatted_meraker.RDS")
+
 }

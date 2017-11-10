@@ -112,3 +112,26 @@ test_that("Sandefjord daily - restrict datasetPredict vs not", {
 
   expect_equal(resAll, resRestricted)
 })
+
+
+test_that("meraker has issues with a very large trend", {
+  library(data.table)
+  if(interactive()){
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
+  } else {
+    BASE <- getwd()
+  }
+  d <- readRDS(file.path(BASE,"data","formatted_meraker.RDS"))
+  setnames(d,"gastro","n")
+  setnames(d,"consultWithoutInfluensa","consult")
+  res2006_2010 <- QuasipoissonTrainPredictData(datasetTrain=d[date<="2010-12-31"],
+                                               datasetPredict=d[date<="2007-01-01"],
+                                               isDaily=F)
+  res2013_2017 <- QuasipoissonTrainPredictData(datasetTrain=d[date>="2013-01-01" & date<="2017-12-31"],
+                                               datasetPredict=d[date<="2007-01-01"],
+                                               isDaily=F)
+
+  expect_lt(mean(res2006_2010$threshold2)*1.5,mean(res2013_2017$threshold2))
+})
+
+
