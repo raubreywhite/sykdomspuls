@@ -181,25 +181,23 @@ FormatData <- function(d,
     d[,date:=data.table::as.IDate(date)]
   }
 
-  d <- d[municip!="municip9999",.(
-    influensa=sum(influensa),
-    gastro=sum(gastro),
-    respiratory=sum(respiratory),
-    consult=sum(consult)
-  ),by=.(
-    age,date,municip
-  )]
+  d <- d[municip!="municip9999",
+         .(lapply(.SD, sum)),
+         by=.(age,date,municip),
+        .SDcols = c(CONFIG$SYNDROMES, 'consult')]
 
   skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),unique(d$date)))
   setnames(skeleton, c("municip","age","date"))
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)
-  data[is.na(influensa),influensa:=0]
-  data[is.na(gastro),gastro:=0]
-  data[is.na(respiratory),respiratory:=0]
-  data[is.na(consult),consult:=0]
 
-  total <- data[,.(influensa=sum(influensa),gastro=sum(gastro),respiratory=sum(respiratory),consult=sum(consult)),
-                by=.(municip,date)]
+  for(i in c(CONFIG$SYNDROMES, 'consult')){
+    data[is.na(get(i)), get(i):= 0]
+  }
+
+  total <- data[municip!="municip9999",
+         .(lapply(.SD, sum)),
+         by=.(date,municip),
+         .SDcols = c(CONFIG$SYNDROMES, 'consult')]
   total[,age:="Totalt"]
   data <- rbind(total,data[age!="Ukjent"])
 
@@ -238,20 +236,18 @@ FormatData <- function(d,
   dim(data)
   data <- merge(data,norwayMunicipMerging[,c("municip","year","municipEnd")],by=c("municip","year"))
   dim(data)
-  data <- data[,.(influensa=sum(influensa),
-                  gastro=sum(gastro),
-                  respiratory=sum(respiratory),
-                  consult=sum(consult),
-                  pop=sum(pop)),
-               by=.(municipEnd,year,age,date)]
+  data <- data[,
+               .(lapply(.SD, sum)),
+               by=.(municipEnd,year,age,date),
+               .SDcols = c(CONFIG$SYNDROMES, 'consult', 'pop')]
   dim(data)
   setnames(data,"municipEnd","municip")
 
   # merging in municipalitiy-fylke names
   data <- merge(data,norwayLocations[,c("municip","county")],by="municip")
-  data[,influensa:=as.numeric(influensa)]
-  data[,gastro:=as.numeric(gastro)]
-  data[,respiratory:=as.numeric(respiratory)]
+  for(i in c(CONFIG$SYNDROMES, 'consult')){
+    data[is.na(get(i)), get(i):= 0]
+  }
   data[,consultWithInfluensa:=as.numeric(consult)]
   data[,consultWithoutInfluensa:=consultWithInfluensa-influensa]
   data[,consult:=NULL]
