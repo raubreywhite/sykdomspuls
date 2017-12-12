@@ -21,6 +21,7 @@ CONFIG$VERSION <- 1
 CONFIG$VERSIONS <- 1:2
 CONFIG$SYNDROMES_DOCTOR <- c("influensa")
 CONFIG$SYNDROMES_ALL <- c("gastro",
+                          "respiratory",
                           "respiratoryinternal",
                           "respiratoryexternal",
                           "lungebetennelse",
