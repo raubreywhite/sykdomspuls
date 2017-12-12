@@ -25,16 +25,28 @@ CheckForOutbreaksUtbrudd <- function(resYearLine=readRDS(fhi::DashboardFolder("r
   setorder(outbreaks,-wkyr,location)
 
   outbreaksGastro <- unique(outbreaks[wkyr==currentWeek & type=="gastro"]$locationName)
-  outbreaksRespiratory <- unique(outbreaks[wkyr==currentWeek & type=="respiratory"]$locationName)
+  outbreaksRespiratory <- unique(outbreaks[wkyr==currentWeek & type=="respiratoryinternal"]$locationName)
   outbreaksInfluensa <- unique(outbreaks[wkyr==currentWeek & type=="influensa"]$locationName)
+  outbreaksLungebetennelse <- unique(outbreaks[wkyr==currentWeek & type=="lungebetennelse"]$locationName)
+  outbreaksBronkitt <- unique(outbreaks[wkyr==currentWeek & type=="bronkitt"]$locationName)
 
-  if(length(outbreaksGastro)>0 | length(outbreaksRespiratory)>0 | length(outbreaksInfluensa)>0){
+  if(length(outbreaksGastro)>0 |
+     length(outbreaksRespiratory)>0 |
+     length(outbreaksInfluensa)>0 |
+     length(outbreaksLungebetennelse)>0 |
+     length(outbreaksBronkitt)>0){
+
     outbreaksGastro <- paste0(outbreaksGastro,collapse=", ")
     outbreaksRespiratory <- paste0(outbreaksRespiratory,collapse=", ")
     outbreaksInfluensa <- paste0(outbreaksInfluensa,collapse=", ")
+    outbreaksLungebetennelse <- paste0(outbreaksLungebetennelse,collapse=", ")
+    outbreaksBronkitt <- paste0(outbreaksBronkitt,collapse=", ")
+
     if(outbreaksGastro=="") outbreaksGastro <- "Ingen"
     if(outbreaksRespiratory=="") outbreaksRespiratory <- "Ingen"
     if(outbreaksInfluensa=="") outbreaksInfluensa <- "Ingen"
+    if(outbreaksLungebetennelse=="") outbreaksLungebetennelse <- "Ingen"
+    if(outbreaksBronkitt=="") outbreaksBronkitt <- "Ingen"
 
     emailText <- sprintf("
 OBS-Varsel fra Sykdomspulsen uke %s:
@@ -59,8 +71,21 @@ Influensa:
 <br>
 %s
 <br><br>
+Lungebetennelse:
+<br>
+%s
+<br><br>
+Akutt bronkitt/bronkiolitt:
+<br>
+%s
+<br><br>
   Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
-",currentWeek,outbreaksGastro,outbreaksRespiratory,outbreaksInfluensa)
+",currentWeek,
+  outbreaksGastro,
+  outbreaksRespiratory,
+  outbreaksInfluensa,
+  outbreaksLungebetennelse,
+  outbreaksBronkitt)
 
     if(Sys.getenv("COMPUTER")=="smhb"){
       fhi::DashboardEmail("sykdomspuls_utbrudd",

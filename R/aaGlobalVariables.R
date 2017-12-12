@@ -26,7 +26,14 @@ CONFIG$SYNDROMES_ALL <- c("gastro",
                           "respiratoryexternal",
                           "lungebetennelse",
                           "bronkitt")
+
 CONFIG$SYNDROMES <- c(CONFIG$SYNDROMES_DOCTOR, CONFIG$SYNDROMES_ALL)
+
+CONFIG$SYNDROMES_ALERT_INTERNAL <- c("influensa",
+                                     "gastro",
+                                     "respiratoryinternal",
+                                     "lungebetennelse",
+                                     "bronkitt")
 
 #' norwayLocations
 #' @export norwayLocations
