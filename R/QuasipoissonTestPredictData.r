@@ -74,11 +74,13 @@ QuasipoissonTrainPredictData = function(
 
   datasetTrain[consult==0,consult:=1]
   datasetTrain[,year := as.numeric(format.Date(date,"%G"))] #Week-based year, instead of normal year (%Y)
-  datasetTrain[,week := data.table::isoweek(date)] #ISO-week, instead of others (%W and %U)
+  datasetTrain[,week := as.numeric(format.Date(date,"%V"))] #Week-based year, instead of normal year (%Y)
+  #datasetTrain[,week := data.table::isoweek(date)] #ISO-week, instead of others (%W and %U)
 
   datasetPredict[consult==0,consult:=1]
   datasetPredict[,year := as.numeric(format.Date(date,"%G"))] #Week-based year, instead of normal year (%Y)
-  datasetPredict[,week := data.table::isoweek(date)] #ISO-week, instead of others (%W and %U)
+  datasetPredict[,week := as.numeric(format.Date(date,"%V"))] #Week-based year, instead of normal year (%Y)
+  #datasetPredict[,week := data.table::isoweek(date)] #ISO-week, instead of others (%W and %U)
 
   #SET REGRESSION FORMULA:
   if(isDaily){

@@ -12,6 +12,10 @@ test_that("Basic Oslo", {
       influensa=c(100),
       gastro=c(100),
       respiratory=c(100),
+      respiratoryinternal=c(100),
+      respiratoryexternal=c(100),
+      lungebetennelse=c(100),
+      bronkitt=c(100),
       consult=c(500),
       municip=c("municip0301")
     )
@@ -43,12 +47,23 @@ test_that("Basic Oslo", {
     stringsAsFactors = FALSE
   ))
   expectedRes[,municip:="municip0301"]
+
   expectedRes[,influensa:=100]
   expectedRes[age=="Totalt",influensa:=700]
   expectedRes[,gastro:=100]
   expectedRes[age=="Totalt",gastro:=700]
   expectedRes[,respiratory:=100]
   expectedRes[age=="Totalt",respiratory:=700]
+  expectedRes[,respiratoryinternal:=100]
+  expectedRes[age=="Totalt",respiratoryinternal:=700]
+  expectedRes[,respiratoryexternal:=100]
+  expectedRes[age=="Totalt",respiratoryexternal:=700]
+  expectedRes[,lungebetennelse:=100]
+  expectedRes[age=="Totalt",lungebetennelse:=700]
+  expectedRes[,bronkitt:=100]
+  expectedRes[age=="Totalt",bronkitt:=700]
+
+
   expectedRes[,consultWithInfluensa:=500]
   expectedRes[age=="Totalt",consultWithInfluensa:=3500]
   expectedRes[,consultWithoutInfluensa:=consultWithInfluensa-influensa]
@@ -56,7 +71,7 @@ test_that("Basic Oslo", {
   expectedRes[age=="Totalt",pop:=600]
   expectedRes[,county:="county03"]
   expectedRes[,HelligdagIndikator:=0]
-  setcolorder(expectedRes,c("date","HelligdagIndikator","county","municip","age","influensa","gastro","respiratory","consultWithInfluensa","consultWithoutInfluensa","pop"))
+  setcolorder(expectedRes,c("date","HelligdagIndikator","county","municip","age",CONFIG$SYNDROMES,"consultWithInfluensa","consultWithoutInfluensa","pop"))
   setorder(expectedRes,date,age)
   setkey(expectedRes,date)
 
@@ -66,7 +81,7 @@ test_that("Basic Oslo", {
 test_that("Oslo + kristiansand fake data", {
   library(data.table)
   if(interactive()){
-    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
   } else {
     BASE <- getwd()
   }
@@ -82,7 +97,7 @@ test_that("Oslo + kristiansand fake data", {
                     hellidager=hellidager,
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
 
-  if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/results/formatted_2017_05_09.RDS")
+  if(FALSE) if(interactive()) saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/results/formatted_2017_05_09.RDS")
   expectedRes <- readRDS(file.path(BASE,"results","formatted_2017_05_09.RDS"))
 
   expect_equal(res,expectedRes)
@@ -92,7 +107,7 @@ test_that("Oslo + kristiansand fake data", {
 test_that("Sandefjord joining together", {
   library(data.table)
   if(interactive()){
-    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
   } else {
     BASE <- getwd()
   }
@@ -108,7 +123,7 @@ test_that("Sandefjord joining together", {
                     hellidager=hellidager,
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
 
-  if(FALSE) if(interactive()) saveRDS(res,file="/packages/dashboards_sykdomspuls/tests/testthat/results/formatted_sandefjord.RDS")
+  if(FALSE) if(interactive()) saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/results/formatted_sandefjord.RDS")
   expectedRes <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
 
   expect_equal(res,expectedRes)

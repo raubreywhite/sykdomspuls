@@ -3,7 +3,7 @@ context("QuasipoissonAlgorithm")
 test_that("Sandefjord significantByThreshold vs significantByConfidenceIntervals", {
   library(data.table)
   if(interactive()){
-    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
   } else {
     BASE <- getwd()
   }
@@ -127,11 +127,11 @@ test_that("meraker has issues with a very large trend", {
   res2006_2010 <- QuasipoissonTrainPredictData(datasetTrain=d[date<="2010-12-31"],
                                                datasetPredict=d[date<="2007-01-01"],
                                                isDaily=F)
-  res2013_2017 <- QuasipoissonTrainPredictData(datasetTrain=d[date>="2013-01-01" & date<="2017-12-31"],
+  res2013_2016 <- QuasipoissonTrainPredictData(datasetTrain=d[date>="2013-01-01" & date<="2016-12-31"],
                                                datasetPredict=d[date<="2007-01-01"],
                                                isDaily=F)
 
-  expect_lt(mean(res2006_2010$threshold2)*1.5,mean(res2013_2017$threshold2))
+  expect_lt(mean(res2006_2010$threshold2)*1.25,mean(res2013_2016$threshold2))
 })
 
 

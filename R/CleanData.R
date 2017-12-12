@@ -182,7 +182,7 @@ FormatData <- function(d,
   }
 
   d <- d[municip!="municip9999",
-         .(lapply(.SD, sum)),
+         lapply(.SD, sum),
          by=.(age,date,municip),
         .SDcols = c(CONFIG$SYNDROMES, 'consult')]
 
@@ -191,11 +191,11 @@ FormatData <- function(d,
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)
 
   for(i in c(CONFIG$SYNDROMES, 'consult')){
-    data[is.na(get(i)), get(i):= 0]
+    data[is.na(get(i)), (i):= 0]
   }
 
   total <- data[municip!="municip9999",
-         .(lapply(.SD, sum)),
+         lapply(.SD, sum),
          by=.(date,municip),
          .SDcols = c(CONFIG$SYNDROMES, 'consult')]
   total[,age:="Totalt"]
@@ -237,7 +237,7 @@ FormatData <- function(d,
   data <- merge(data,norwayMunicipMerging[,c("municip","year","municipEnd")],by=c("municip","year"))
   dim(data)
   data <- data[,
-               .(lapply(.SD, sum)),
+               lapply(.SD, sum),
                by=.(municipEnd,year,age,date),
                .SDcols = c(CONFIG$SYNDROMES, 'consult', 'pop')]
   dim(data)
@@ -246,7 +246,7 @@ FormatData <- function(d,
   # merging in municipalitiy-fylke names
   data <- merge(data,norwayLocations[,c("municip","county")],by="municip")
   for(i in c(CONFIG$SYNDROMES, 'consult')){
-    data[is.na(get(i)), get(i):= 0]
+    data[is.na(get(i)), (i):= 0]
   }
   data[,consultWithInfluensa:=as.numeric(consult)]
   data[,consultWithoutInfluensa:=consultWithInfluensa-influensa]
@@ -272,9 +272,7 @@ FormatData <- function(d,
                      "county",
                      "municip",
                      "age",
-                     "influensa",
-                     "gastro",
-                     "respiratory",
+                     CONFIG$SYNDROMES,
                      "consultWithInfluensa",
                      "consultWithoutInfluensa",
                      "pop"))
