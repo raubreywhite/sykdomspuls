@@ -6,9 +6,6 @@
 \usage{
 LatestDatasets()
 }
-\arguments{
-\item{clean}{a}
-}
 \description{
 test
 }

@@ -46,7 +46,6 @@ CreateLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("
 }
 
 #' test
-#' @param clean a
 #' @import fhi
 #' @export LatestDatasets
 LatestDatasets <- function(){
