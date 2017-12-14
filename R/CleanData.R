@@ -7,12 +7,11 @@ LatestDatasets <- function(clean=list.files(fhi::DashboardFolder("data_clean"),"
   clean <- gsub(".txt","",gsub("done_","",clean))
   clean <- max(clean)
 
-  LATEST_DATA <- list(
-    "everyone_everyone"=paste0(clean,"_cleaned_everyone_everyone.RDS"),
-    "everyone_fastlege"=paste0(clean,"_cleaned_everyone_fastlege.RDS"),
-    "legekontakt_everyone"=paste0(clean,"_cleaned_legekontakt_everyone.RDS"),
-    "legekontakt_fastlege"=paste0(clean,"_cleaned_legekontakt_fastlege.RDS"),
-    "date"=clean
+  LATEST_DATA$everyone_everyone <- paste0(clean,"_cleaned_everyone_everyone.RDS")
+  LATEST_DATA$everyone_fastlege <- paste0(clean,"_cleaned_everyone_fastlege.RDS")
+  LATEST_DATA$legekontakt_everyone <- paste0(clean,"_cleaned_legekontakt_everyone.RDS")
+  LATEST_DATA$legekontakt_fastlege <- paste0(clean,"_cleaned_legekontakt_fastlege.RDS")
+  LATEST_DATA$date <- clean
   )
 }
 
