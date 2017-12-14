@@ -35,6 +35,10 @@ CONFIG$SYNDROMES_ALERT_INTERNAL <- c("influensa",
                                      "lungebetennelse",
                                      "bronkitt")
 
+#' LATEST_DATA
+#' @export LATEST_DATA
+LATEST_DATA <- new.env(parent = emptyenv())
+
 #' norwayLocations
 #' @export norwayLocations
 norwayLocations <- GenNorwayLocations()

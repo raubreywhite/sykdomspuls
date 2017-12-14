@@ -7,13 +7,13 @@ LatestDatasets <- function(clean=list.files(fhi::DashboardFolder("data_clean"),"
   clean <- gsub(".txt","",gsub("done_","",clean))
   clean <- max(clean)
 
-  return(list(
+  LATEST_DATA <- list(
     "everyone_everyone"=paste0(clean,"_cleaned_everyone_everyone.RDS"),
     "everyone_fastlege"=paste0(clean,"_cleaned_everyone_fastlege.RDS"),
     "legekontakt_everyone"=paste0(clean,"_cleaned_legekontakt_everyone.RDS"),
     "legekontakt_fastlege"=paste0(clean,"_cleaned_legekontakt_fastlege.RDS"),
     "date"=clean
-  ))
+  )
 }
 
 #' test
@@ -32,6 +32,8 @@ IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^p
   clean[,id:=gsub(".txt","",gsub("done_","",clean))]
   clean[,isClean:=TRUE]
   res <- merge(raw,clean,by="id",all=TRUE)
+  setorder(res,id)
+  if(nrow(res)>0) res <- res[nrow(res)]
 
   return(res)
 }
@@ -360,26 +362,15 @@ UpdateData <- function(){
       d <- fread(fhi::DashboardFolder("data_raw",files[i]$raw))
       d[,date:=data.table::as.IDate(date)]
 
-      #LU <- GetAgesLU(ageStrings=unique(d$age))
-      #municip <- unique(norwayMunicipMerging$municip)
-      #municip <- stringr::str_extract(municip,"[0-9][0-9][0-9][0-9]$")
-      #GetPopulation(L=LU$L,U=LU$U, municip=municip)
-
       res <- FormatData(d[Kontaktype=="Legekontakt"])
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_legekontakt_everyone.RDS")))
-
-      #print("legekontakt_fastlege")
-      #res <- FormatData(d[Kontaktype=="Legekontakt" & Praksis=="Fastlege"])
-      #saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_legekontakt_fastlege.RDS")))
-
-      #print("everyone_fastlege")
-      #res <- FormatData(d[Praksis=="Fastlege"])
-      #saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_fastlege.RDS")))
 
       res <- FormatData(d)
       saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_everyone.RDS")))
 
       file.create(fhi::DashboardFolder("data_clean",paste0("done_",files[i]$id,".txt")))
+      LatestDatasets()
+      unlink(fhi::DashboardFolder("data_clean",paste0("done_",files[i]$id,".txt")),force=T)
     }
     cat(sprintf("%s/%s/R/SYKDOMSPULS New data is now formatted and ready",Sys.time(),Sys.getenv("COMPUTER")),"\n")
     return(TRUE)
