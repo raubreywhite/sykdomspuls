@@ -46,10 +46,10 @@ CreateLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("
 }
 
 #' test
+#' @param clean a
 #' @import fhi
 #' @export LatestDatasets
-LatestDatasets <- function(){
-  clean <- LatestRawID()$id
+LatestDatasets <- function(clean=LatestRawID()){
 
   return(list(
     "everyone_everyone"=paste0(clean,"_cleaned_everyone_everyone.RDS"),

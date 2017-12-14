@@ -4,7 +4,10 @@
 \alias{LatestDatasets}
 \title{test}
 \usage{
-LatestDatasets()
+LatestDatasets(clean = LatestRawID())
+}
+\arguments{
+\item{clean}{a}
 }
 \description{
 test
