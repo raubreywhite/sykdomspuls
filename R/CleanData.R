@@ -1,21 +1,4 @@
 #' test
-#' @param clean a
-#' @import fhi
-#' @export LatestDatasets
-LatestDatasets <- function(clean=list.files(fhi::DashboardFolder("data_clean"),"done_")){
-
-  clean <- gsub(".txt","",gsub("done_","",clean))
-  clean <- max(clean)
-
-  LATEST_DATA$everyone_everyone <- paste0(clean,"_cleaned_everyone_everyone.RDS")
-  LATEST_DATA$everyone_fastlege <- paste0(clean,"_cleaned_everyone_fastlege.RDS")
-  LATEST_DATA$legekontakt_everyone <- paste0(clean,"_cleaned_legekontakt_everyone.RDS")
-  LATEST_DATA$legekontakt_fastlege <- paste0(clean,"_cleaned_legekontakt_fastlege.RDS")
-  LATEST_DATA$date <- clean
-  )
-}
-
-#' test
 #' @param raw a
 #' @param clean a
 #' @import data.table
@@ -36,6 +19,48 @@ IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^p
 
   return(res)
 }
+
+#' test
+#' @export LatestRawID
+LatestRawID <- function(){
+  f <- IdentifyDatasets()
+  return(max(f$id))
+}
+
+#' test
+#' @param file a
+#' @import fhi
+#' @export DeleteLatestDoneFile
+DeleteLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("done_",LatestRawID(),".txt"))){
+  try(unlink(file),TRUE)
+  #try(unlink(paste0("data_clean/done_",LatestRawID(),".txt")),TRUE)
+}
+
+#' test
+#' @param file a
+#' @import fhi
+#' @export CreateLatestDoneFile
+CreateLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("done_",LatestRawID(),".txt"))){
+  try(file.create(file),TRUE)
+  #try(file.create(paste0("data_clean/done_",LatestRawID(),".txt")),TRUE)
+}
+
+#' test
+#' @param clean a
+#' @import fhi
+#' @export LatestDatasets
+LatestDatasets <- function(){
+  clean <- LatestRawID()$id
+
+  return(list(
+    "everyone_everyone"=paste0(clean,"_cleaned_everyone_everyone.RDS"),
+    "everyone_fastlege"=paste0(clean,"_cleaned_everyone_fastlege.RDS"),
+    "legekontakt_everyone"=paste0(clean,"_cleaned_legekontakt_everyone.RDS"),
+    "legekontakt_fastlege"=paste0(clean,"_cleaned_legekontakt_fastlege.RDS"),
+    "date"=clean
+  ))
+}
+
 
 #' GetPopulation
 #' Mostly a function used by the package maintainer
@@ -279,43 +304,6 @@ FormatData <- function(d,
                      "pop"))
 
   return(data)
-}
-
-#' test
-#' @export LatestRawID
-LatestRawID <- function(){
-  f <- IdentifyDatasets()
-  return(max(f$id))
-}
-
-#' test
-#' @param file a
-#' @import fhi
-#' @export DeleteLatestDoneFile
-DeleteLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("done_",LatestRawID(),".txt"))){
-  try(unlink(file),TRUE)
-  #try(unlink(paste0("data_clean/done_",LatestRawID(),".txt")),TRUE)
-}
-
-#' test
-#' @param file a
-#' @import fhi
-#' @export CreateLatestDoneFile
-CreateLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("done_",LatestRawID(),".txt"))){
-  try(file.create(file),TRUE)
-  #try(file.create(paste0("data_clean/done_",LatestRawID(),".txt")),TRUE)
-}
-
-#' test
-#' @export InitialiseStatus
-InitialiseStatus <- function(){
-  f <- IdentifyDatasets()
-  dates <- list()
-  dates$program <- "Sykdomspuls"
-  dates$clean <- as.Date(f[clean==max(clean,na.rm=T)]$id,format="%Y_%m_%d")
-  dates$raw <- as.Date(f[raw==max(raw,na.rm=T)]$id,format="%Y_%m_%d")
-  dates$run <- as.Date(Sys.time())
-  return(dates)
 }
 
 #' test

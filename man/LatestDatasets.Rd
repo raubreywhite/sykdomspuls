@@ -4,8 +4,7 @@
 \alias{LatestDatasets}
 \title{test}
 \usage{
-LatestDatasets(clean = list.files(fhi::DashboardFolder("data_clean"),
-  "done_"))
+LatestDatasets()
 }
 \arguments{
 \item{clean}{a}
