@@ -11,6 +11,22 @@ ListOutbreaks <- function(df=readRDS(fhi::DashboardFolder("results","resYearLine
                           saveFiles=c(
                             fhi::DashboardFolder("results","outbreaks.RDS"),
                             fhi::DashboardFolder("data_app","outbreaks.RDS"))){
+  # variables used in data.table functions in this function
+  . <- NULL
+  status <- NULL
+  wkyr <- NULL
+  age <- NULL
+  county <- NULL
+  location <- NULL
+  locationName <- NULL
+  zscore <- NULL
+  type <- NULL
+  cumE1 <- NULL
+  meanZScore <- NULL
+  sumCum <- NULL
+  sumCumNorge <- NULL
+  countyName <- NULL
+  # end
 
   counties <- unique(df[,c("location","locationName"),with=F])
   setnames(counties,c("county","countyName"))

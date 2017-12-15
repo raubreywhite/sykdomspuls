@@ -6,6 +6,10 @@
 #' @export IdentifyDatasets
 IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^partially_formatted_"),
                              clean=list.files(fhi::DashboardFolder("data_clean"),"done_")){
+  # variables used in data.table functions in this function
+  id <- isRaw <- isClean <- NULL
+  # end
+
   raw <- data.table(raw)
   clean <- data.table(clean)
 
@@ -47,15 +51,16 @@ CreateLatestDoneFile <- function(file=fhi::DashboardFolder("data_clean",paste0("
 
 #' test
 #' @param clean a
+#' @param SYNDROME a
 #' @import fhi
 #' @export LatestDatasets
-LatestDatasets <- function(clean=LatestRawID()){
+LatestDatasets <- function(clean=LatestRawID(),SYNDROME="influensa"){
 
   return(list(
-    "everyone_everyone"=paste0(clean,"_cleaned_everyone_everyone.RDS"),
-    "everyone_fastlege"=paste0(clean,"_cleaned_everyone_fastlege.RDS"),
-    "legekontakt_everyone"=paste0(clean,"_cleaned_legekontakt_everyone.RDS"),
-    "legekontakt_fastlege"=paste0(clean,"_cleaned_legekontakt_fastlege.RDS"),
+    "everyone_everyone"=paste0(clean,"_",SYNDROME,"_cleaned_everyone_everyone.RDS"),
+    "everyone_fastlege"=paste0(clean,"_",SYNDROME,"_cleaned_everyone_fastlege.RDS"),
+    "legekontakt_everyone"=paste0(clean,"_",SYNDROME,"_cleaned_legekontakt_everyone.RDS"),
+    "legekontakt_fastlege"=paste0(clean,"_",SYNDROME,"_cleaned_legekontakt_fastlege.RDS"),
     "date"=clean
   ))
 }
@@ -81,6 +86,14 @@ GetPopulation <- function(
   municip=stringr::str_extract(readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls"))$municip,"[0-9][0-9][0-9][0-9]$"),
   saveFiles=file.path("/packages","dashboards_sykdomspuls","inst","extdata","pop.RDS"),
   yearsCopiedAtTail=5){
+  # variables used in data.table functions in this function
+  . <- NULL
+  value <- NULL
+  age <- NULL
+  Var2 <- NULL
+  agecont <- NULL
+  pop <- NULL
+  # end
 
   municip <- municip[nchar(municip)==4 & municip!="9999"]
   ages <- c(formatC(0:104,width=3,flag="0"), "105+")
@@ -192,37 +205,55 @@ GetPopulation <- function(
 
 #' test
 #' @param d a
+#' @param SYNDROME a
 #' @param population a
 #' @param hellidager a
 #' @param testIfHelligdagIndikatorFileIsOutdated a
 #' @import data.table
 #' @importFrom lubridate today
 #' @export FormatData
-FormatData <- function(d,
+FormatData <- function(d,SYNDROME,
                        population=readRDS(system.file("extdata", "pop.RDS", package = "sykdomspuls")),
                        hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE],
                        testIfHelligdagIndikatorFileIsOutdated=TRUE){
+  # variables used in data.table functions in this function
+  . <- NULL
+  municip <- NULL
+  age <- NULL
+  datex <- NULL
+  yrwk <- NULL
+  municipEnd <- NULL
+  consult <- NULL
+  consultWithInfluensa <- NULL
+  consultWithoutInfluensa <- NULL
+  influensa <- NULL
+  pop <- NULL
+  error <- NULL
+  # end
+
   if(! "IDate" %in% class(d$date)){
     d[,date:=data.table::as.IDate(date)]
   }
 
+  SYNDROME_AND_INFLUENSA <- unique(c(SYNDROME,"influensa"))
+
   d <- d[municip!="municip9999",
          lapply(.SD, sum),
          by=.(age,date,municip),
-        .SDcols = c(CONFIG$SYNDROMES, 'consult')]
+        .SDcols = c(SYNDROME_AND_INFLUENSA, 'consult')]
 
   skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),unique(d$date)))
   setnames(skeleton, c("municip","age","date"))
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)
 
-  for(i in c(CONFIG$SYNDROMES, 'consult')){
+  for(i in c(SYNDROME_AND_INFLUENSA, 'consult')){
     data[is.na(get(i)), (i):= 0]
   }
 
   total <- data[municip!="municip9999",
          lapply(.SD, sum),
          by=.(date,municip),
-         .SDcols = c(CONFIG$SYNDROMES, 'consult')]
+         .SDcols = c(SYNDROME_AND_INFLUENSA, 'consult')]
   total[,age:="Totalt"]
   data <- rbind(total,data[age!="Ukjent"])
 
@@ -264,13 +295,13 @@ FormatData <- function(d,
   data <- data[,
                lapply(.SD, sum),
                by=.(municipEnd,year,age,date),
-               .SDcols = c(CONFIG$SYNDROMES, 'consult', 'pop')]
+               .SDcols = c(SYNDROME_AND_INFLUENSA, 'consult', 'pop')]
   dim(data)
   setnames(data,"municipEnd","municip")
 
   # merging in municipalitiy-fylke names
   data <- merge(data,norwayLocations[,c("municip","county")],by="municip")
-  for(i in c(CONFIG$SYNDROMES, 'consult')){
+  for(i in c(SYNDROME, 'consult')){
     data[is.na(get(i)), (i):= 0]
   }
   data[,consultWithInfluensa:=as.numeric(consult)]
@@ -292,15 +323,20 @@ FormatData <- function(d,
 
   data[,year:=NULL]
 
+  if(SYNDROME != "influensa"){
+    data[,influensa:=NULL]
+  }
+
   setcolorder(data,c("date",
                      "HelligdagIndikator",
                      "county",
                      "municip",
                      "age",
-                     CONFIG$SYNDROMES,
+                     SYNDROME,
                      "consultWithInfluensa",
                      "consultWithoutInfluensa",
                      "pop"))
+  setnames(data,SYNDROME,"value")
 
   return(data)
 }
@@ -331,6 +367,10 @@ GetAgesLU <- function(ageStrings){
 #' @importFrom RAWmisc IsFileStable
 #' @export UpdateData
 UpdateData <- function(){
+  # variables used in data.table functions in this function
+  isClean <- NULL
+  Kontaktype <- NULL
+  # end
   files <- IdentifyDatasets()
   files <- files[is.na(isClean)]
   if(nrow(files)==0){
@@ -348,15 +388,17 @@ UpdateData <- function(){
       d <- fread(fhi::DashboardFolder("data_raw",files[i]$raw))
       d[,date:=data.table::as.IDate(date)]
 
-      res <- FormatData(d[Kontaktype=="Legekontakt"])
-      saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_legekontakt_everyone.RDS")))
+      for(SYNDROME in CONFIG$SYNDROMES){
+        res <- FormatData(d[Kontaktype=="Legekontakt"], SYNDROME=SYNDROME)
+        saveRDS(res,file=fhi::DashboardFolder("data_clean",
+                                              sprintf("%s_%s_cleaned_legekontakt_everyone.RDS",
+                                                      files[i]$id,SYNDROME)))
 
-      res <- FormatData(d)
-      saveRDS(res,file=fhi::DashboardFolder("data_clean",paste0(files[i]$id,"_cleaned_everyone_everyone.RDS")))
-
-      file.create(fhi::DashboardFolder("data_clean",paste0("done_",files[i]$id,".txt")))
-      LatestDatasets()
-      unlink(fhi::DashboardFolder("data_clean",paste0("done_",files[i]$id,".txt")),force=T)
+        res <- FormatData(d, SYNDROME=SYNDROME)
+        saveRDS(res,file=fhi::DashboardFolder("data_clean",
+                                              sprintf("%s_%s_cleaned_everyone_everyone.RDS",
+                                                      files[i]$id,SYNDROME)))
+      }
     }
     cat(sprintf("%s/%s/R/SYKDOMSPULS New data is now formatted and ready",Sys.time(),Sys.getenv("COMPUTER")),"\n")
     return(TRUE)

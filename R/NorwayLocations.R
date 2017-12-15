@@ -15,6 +15,18 @@ GenNorwayLocations <- function(){
 #' @importFrom zoo na.locf
 #' @export GenNorwayMunicipMerging
 GenNorwayMunicipMerging <- function(){
+  # variables used in data.table functions in this function
+  yearStart <- NULL
+  municip <- NULL
+  yearEnd <- NULL
+  municipName <- NULL
+  municipEnd <- NULL
+  county <- NULL
+  countyName <- NULL
+  region <- NULL
+  regionName <- NULL
+  #end
+
   masterData <- data.table(readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls")))
   masterData[yearStart <= 2006, yearStart := 2006]
   setnames(masterData,"yearStart","year")

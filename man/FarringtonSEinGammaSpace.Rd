@@ -4,7 +4,7 @@
 \alias{FarringtonSEinGammaSpace}
 \title{test}
 \usage{
-FarringtonSEinGammaSpace(pred, phi, alpha = null, z = NULL,
+FarringtonSEinGammaSpace(pred, phi, alpha = NULL, z = NULL,
   skewness.transform = "none")
 }
 \arguments{

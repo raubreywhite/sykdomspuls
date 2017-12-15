@@ -4,7 +4,7 @@
 \alias{FarringtonThreshold}
 \title{test}
 \usage{
-FarringtonThreshold(pred, phi, alpha = null, z = NULL,
+FarringtonThreshold(pred, phi, alpha = NULL, z = NULL,
   skewness.transform = "none")
 }
 \arguments{

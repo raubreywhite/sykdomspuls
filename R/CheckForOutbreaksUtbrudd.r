@@ -4,6 +4,21 @@
 #' @import data.table
 #' @export CheckForOutbreaksUtbrudd
 CheckForOutbreaksUtbrudd <- function(resYearLine=readRDS(fhi::DashboardFolder("results","resYearLine.RDS"))){
+  # variables used in data.table functions in this function
+  status <- NULL
+  location <- NULL
+  statusNum0 <- NULL
+  statusNum1 <- NULL
+  statusNum2 <- NULL
+  statusSum2weeks <- NULL
+  statusSum3weeks <- NULL
+  statusYellow <- NULL
+  statusRed <- NULL
+  age <- NULL
+  wkyr <- NULL
+  type <- NULL
+  # end
+
   currentWeek <- max(resYearLine$wkyr)
 
   resYearLine[,statusNum0:=0]
@@ -81,16 +96,16 @@ Akutt bronkitt/bronkiolitt:
 <br><br>
   Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
 ",currentWeek,
-  outbreaksGastro,
-  outbreaksRespiratory,
-  outbreaksInfluensa,
-  outbreaksLungebetennelse,
-  outbreaksBronkitt)
+                         outbreaksGastro,
+                         outbreaksRespiratory,
+                         outbreaksInfluensa,
+                         outbreaksLungebetennelse,
+                         outbreaksBronkitt)
 
     if(Sys.getenv("COMPUTER")=="smhb"){
       fhi::DashboardEmail("sykdomspuls_utbrudd",
-                              sprintf("OBS-Varsel fra Sykdomspulsen uke %s",currentWeek),
-                              emailText)
+                          sprintf("OBS-Varsel fra Sykdomspulsen uke %s",currentWeek),
+                          emailText)
     }
   }
 

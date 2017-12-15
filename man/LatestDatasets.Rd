@@ -4,10 +4,12 @@
 \alias{LatestDatasets}
 \title{test}
 \usage{
-LatestDatasets(clean = LatestRawID())
+LatestDatasets(clean = LatestRawID(), SYNDROME = "influensa")
 }
 \arguments{
 \item{clean}{a}
+
+\item{SYNDROME}{a}
 }
 \description{
 test

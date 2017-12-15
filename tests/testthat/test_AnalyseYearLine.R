@@ -3,12 +3,12 @@ context("AnalyseYearLine")
 test_that("Sandefjord significantByThreshold vs significantByConfidenceIntervals", {
   library(data.table)
   if(interactive()){
-    BASE <- "/packages/dashboards_sykdomspuls/tests/testthat"
+    BASE <- "/git/dashboards_sykdomspuls/tests/testthat"
   } else {
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
-  setnames(d,"influensa","value")
+  #setnames(d,"influensa","value")
   setnames(d,"consultWithInfluensa","consult")
   res <- AnalyseYearLine(d,v=1)
 

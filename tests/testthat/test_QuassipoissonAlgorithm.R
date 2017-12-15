@@ -8,7 +8,7 @@ test_that("Sandefjord significantByThreshold vs significantByConfidenceIntervals
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
-  setnames(d,"influensa","n")
+  setnames(d,"value","n")
   setnames(d,"consultWithInfluensa","consult")
   res <- QuasipoissonTrainPredictData(datasetTrain=d,
                                       datasetPredict=d,
@@ -27,7 +27,7 @@ test_that("Sandefjord significantByThreshold vs significantByZScore", {
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
-  setnames(d,"influensa","n")
+  setnames(d,"value","n")
   setnames(d,"consultWithInfluensa","consult")
   res <- QuasipoissonTrainPredictData(datasetTrain=d,
                                datasetPredict=d,
@@ -47,7 +47,7 @@ test_that("Sandefjord weekly - restrict datasetTrain vs not", {
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
-  setnames(d,"influensa","n")
+  setnames(d,"value","n")
   setnames(d,"consultWithInfluensa","consult")
 
   resAll <- QuasipoissonTrainPredictData(
@@ -71,7 +71,7 @@ test_that("Sandefjord daily - restrict datasetTrain vs not", {
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
-  setnames(d,"influensa","n")
+  setnames(d,"value","n")
   setnames(d,"consultWithInfluensa","consult")
 
   resAll <- QuasipoissonTrainPredictData(
@@ -95,7 +95,7 @@ test_that("Sandefjord daily - restrict datasetPredict vs not", {
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"results","formatted_sandefjord.RDS"))
-  setnames(d,"influensa","n")
+  setnames(d,"value","n")
   setnames(d,"consultWithInfluensa","consult")
 
   resAll <- QuasipoissonTrainPredictData(
@@ -122,7 +122,7 @@ test_that("meraker has issues with a very large trend", {
     BASE <- getwd()
   }
   d <- readRDS(file.path(BASE,"data","formatted_meraker.RDS"))
-  setnames(d,"gastro","n")
+  setnames(d,"value","n")
   setnames(d,"consultWithoutInfluensa","consult")
   res2006_2010 <- QuasipoissonTrainPredictData(datasetTrain=d[date<="2010-12-31"],
                                                datasetPredict=d[date<="2007-01-01"],

@@ -4,7 +4,7 @@
 \alias{FarringtonZscore}
 \title{test}
 \usage{
-FarringtonZscore(pred, phi, alpha = null, z = NULL,
+FarringtonZscore(pred, phi, alpha = NULL, z = NULL,
   skewness.transform = "none", y)
 }
 \arguments{

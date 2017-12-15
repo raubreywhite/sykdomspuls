@@ -4,14 +4,16 @@
 \alias{FormatData}
 \title{test}
 \usage{
-FormatData(d, population = readRDS(system.file("extdata", "pop.RDS", package =
-  "sykdomspuls")), hellidager = fread(system.file("extdata",
+FormatData(d, SYNDROME, population = readRDS(system.file("extdata", "pop.RDS",
+  package = "sykdomspuls")), hellidager = fread(system.file("extdata",
   "DatoerMedHelligdager.txt", package = "sykdomspuls"))[, c("Dato",
   "HelligdagIndikator"), with = FALSE],
   testIfHelligdagIndikatorFileIsOutdated = TRUE)
 }
 \arguments{
 \item{d}{a}
+
+\item{SYNDROME}{a}
 
 \item{population}{a}
 

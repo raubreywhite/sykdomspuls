@@ -48,6 +48,18 @@ CalculateTrainPredictYearPattern <- function(yearMin,yearMax,numPerYear1=1){
 #' @import data.table
 #' @export AnalyseYearLine
 AnalyseYearLine <- function(data,  v) {
+  # variables used in data.table functions in this function
+  . <- NULL
+  value <- NULL
+  consult <- NULL
+  pop <- NULL
+  HelligdagIndikator <- NULL
+  threshold2 <- NULL
+  x <- NULL
+  wkyr <- NULL
+  day <- NULL
+  # end
+
   yearMax <- as.numeric(format.Date(max(data$date),"%G"))
   yearMin <- as.numeric(format.Date(min(data$date),"%G"))
 
@@ -92,6 +104,15 @@ AnalyseYearLine <- function(data,  v) {
 #' @import data.table
 #' @export AnalyseRecentLine
 AnalyseRecentLine <- function(data, v) {
+  # variables used in data.table functions in this function
+  . <- NULL
+  value <- NULL
+  consult <- NULL
+  pop <- NULL
+  HelligdagIndikator <- NULL
+  threshold2 <- NULL
+  # end
+
   yearMax <- as.numeric(format.Date(max(data$date),"%G"))
   yearMin <- as.numeric(format.Date(min(data$date),"%G"))
 
@@ -129,7 +150,17 @@ AnalyseRecentLine <- function(data, v) {
 #' @import data.table
 #' @export RunOneAnalysis
 RunOneAnalysis <- function(analysesStack,analysisData){
-  #runData <- GetDataFromControlStack(analysesIter)
+  # variables used in data.table functions in this function
+  age <- NULL
+  type <- NULL
+  location <- NULL
+  locationName <- NULL
+  status <- NULL
+  n <- NULL
+  threshold2 <- NULL
+  threshold4 <- NULL
+  #end
+
   if(analysesStack$type=="influensa"){
     setnames(analysisData,"consultWithInfluensa","consult")
   } else {

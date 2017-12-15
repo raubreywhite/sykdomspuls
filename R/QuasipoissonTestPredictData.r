@@ -1,4 +1,12 @@
 FormatDatasetDaily <- function(data){
+  # variables used in data.table functions in this function
+  . <- NULL
+  trend <- NULL
+  dayOfYear <- NULL
+  dayOfWeek <- NULL
+  consult <- NULL
+  #end
+
   data[, trend:=as.numeric(date)-13000]
   data[,dayOfYear:=data.table::yday(date)]
   data[,dayOfWeek:=data.table::wday(date)]
@@ -8,6 +16,15 @@ FormatDatasetDaily <- function(data){
 }
 
 FormatDatasetWeekly <- function(data){
+  # variables used in data.table functions in this function
+  . <- NULL
+  n <- NULL
+  consult <- NULL
+  trend <- NULL
+  pop <- NULL
+  HelligdagIndikator <- NULL
+  #end
+
   data <- data[year>=2006 & week %in% 1:52]
   data[, trend:=as.numeric(date)-13000]
   data <- data[,.(n=sum(n),
@@ -53,6 +70,22 @@ QuasipoissonTrainPredictData = function(
   sign.level=0.05,
   isDaily=TRUE,
   v=1){
+  # variables used in data.table functions in this function
+  consult <- NULL
+  n <- NULL
+  threshold0 <- NULL
+  threshold2 <- NULL
+  threshold4 <- NULL
+  threshold6 <- NULL
+  zscore <- NULL
+  cumE1 <- NULL
+  cumL1 <- NULL
+  cumU1 <- NULL
+  failed <- NULL
+  revcumE1 <- NULL
+  revcumL1 <- NULL
+  revcumU1 <- NULL
+  # end
 
   #FUNCTION quasipoisson.algorithm
   #
@@ -105,8 +138,8 @@ QuasipoissonTrainPredictData = function(
   }
 
   #FIT QUASI-POISSON REGRESSION MODEL ON THE TRAINING SET:
-  normalFunction <- function(regformula, dataset.training){
-    fit <- glm2::glm2(regformula,data=dataset.training,family=quasipoisson,na.action=na.omit)
+  normalFunction <- function(regformula, datasetTrain){
+    fit <- glm2::glm2(regformula,data=datasetTrain,family=quasipoisson,na.action=na.omit)
     return(list(fit=fit, failed=!fit$converged))
   }
   exceptionalFunction <- function(err){
@@ -139,7 +172,7 @@ QuasipoissonTrainPredictData = function(
         anscombe.res = anscombe.residuals(poisreg$fit, dispersion_parameter)
         anscombe.res[anscombe.res < 1] = 1 #Alt. 2.58?
         datasetTrain[, w_i := anscombe.res ^ (-2)] #The weight
-        Gamma = nrow(datasetTrain) / sum(dataset.training$w_i)
+        Gamma = nrow(datasetTrain) / sum(datasetTrain$w_i)
         datasetTrain[, w_i := Gamma * w_i] #Makes sum(w_i) = n
         poisreg$fit = glm2::glm2(regformula, data = datasetTrain, weights = w_i, family = quasipoisson, na.action = na.omit)
         dispersion_parameter = summary(poisreg$fit)$dispersion

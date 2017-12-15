@@ -5,7 +5,7 @@
 #' @param z a
 #' @param skewness.transform a
 #' @export FarringtonSEinGammaSpace
-FarringtonSEinGammaSpace <- function (pred, phi, alpha = null, z=NULL, skewness.transform = "none")
+FarringtonSEinGammaSpace <- function (pred, phi, alpha = NULL, z=NULL, skewness.transform = "none")
 {
   mu0 <- pred$fit
   tau <- phi + (pred$se.fit^2)/mu0
@@ -32,7 +32,7 @@ FarringtonSEinGammaSpace <- function (pred, phi, alpha = null, z=NULL, skewness.
 #' @param z a
 #' @param skewness.transform a
 #' @export FarringtonThreshold
-FarringtonThreshold <- function (pred, phi, alpha = null, z=NULL, skewness.transform = "none")
+FarringtonThreshold <- function (pred, phi, alpha = NULL, z=NULL, skewness.transform = "none")
 {
   mu0 <- pred$fit
   tau <- phi + (pred$se.fit^2)/mu0
@@ -63,7 +63,7 @@ FarringtonThreshold <- function (pred, phi, alpha = null, z=NULL, skewness.trans
 #' @param skewness.transform a
 #' @param y a
 #' @export FarringtonZscore
-FarringtonZscore <- function (pred, phi, alpha = null, z=NULL, skewness.transform = "none", y)
+FarringtonZscore <- function (pred, phi, alpha = NULL, z=NULL, skewness.transform = "none", y)
 {
   mu0 <- pred$fit
   tau <- phi + (pred$se.fit^2)/mu0

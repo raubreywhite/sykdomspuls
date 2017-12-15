@@ -37,6 +37,7 @@ test_that("Basic Oslo", {
   )
 
   res <- FormatData(d,
+                    SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
@@ -48,30 +49,17 @@ test_that("Basic Oslo", {
   ))
   expectedRes[,municip:="municip0301"]
 
-  expectedRes[,influensa:=100]
-  expectedRes[age=="Totalt",influensa:=700]
-  expectedRes[,gastro:=100]
-  expectedRes[age=="Totalt",gastro:=700]
-  expectedRes[,respiratory:=100]
-  expectedRes[age=="Totalt",respiratory:=700]
-  expectedRes[,respiratoryinternal:=100]
-  expectedRes[age=="Totalt",respiratoryinternal:=700]
-  expectedRes[,respiratoryexternal:=100]
-  expectedRes[age=="Totalt",respiratoryexternal:=700]
-  expectedRes[,lungebetennelse:=100]
-  expectedRes[age=="Totalt",lungebetennelse:=700]
-  expectedRes[,bronkitt:=100]
-  expectedRes[age=="Totalt",bronkitt:=700]
-
+  expectedRes[,value:=100]
+  expectedRes[age=="Totalt",value:=700]
 
   expectedRes[,consultWithInfluensa:=500]
   expectedRes[age=="Totalt",consultWithInfluensa:=3500]
-  expectedRes[,consultWithoutInfluensa:=consultWithInfluensa-influensa]
+  expectedRes[,consultWithoutInfluensa:=consultWithInfluensa-value]
   expectedRes[,pop:=100]
   expectedRes[age=="Totalt",pop:=600]
   expectedRes[,county:="county03"]
   expectedRes[,HelligdagIndikator:=0]
-  setcolorder(expectedRes,c("date","HelligdagIndikator","county","municip","age",CONFIG$SYNDROMES,"consultWithInfluensa","consultWithoutInfluensa","pop"))
+  setcolorder(expectedRes,c("date","HelligdagIndikator","county","municip","age","value","consultWithInfluensa","consultWithoutInfluensa","pop"))
   setorder(expectedRes,date,age)
   setkey(expectedRes,date)
 
@@ -93,6 +81,7 @@ test_that("Oslo + kristiansand fake data", {
   hellidager=readRDS(file.path(BASE,"data","hellidager.RDS"))
 
   res <- FormatData(d,
+                    SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
@@ -119,6 +108,7 @@ test_that("Sandefjord joining together", {
   hellidager=readRDS(file.path(BASE,"data","hellidager.RDS"))
 
   res <- FormatData(d,
+                    SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
                     testIfHelligdagIndikatorFileIsOutdated=FALSE)
