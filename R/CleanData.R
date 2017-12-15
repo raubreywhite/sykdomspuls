@@ -84,7 +84,7 @@ GetPopulation <- function(
   L=c(0,5,15,20,30,65),
   U=c(4,14,19,29,64,9999),
   municip=stringr::str_extract(readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls"))$municip,"[0-9][0-9][0-9][0-9]$"),
-  saveFiles=file.path("/packages","dashboards_sykdomspuls","inst","extdata","pop.RDS"),
+  saveFiles=file.path("/git","dashboards_sykdomspuls","inst","extdata","pop.RDS"),
   yearsCopiedAtTail=5){
   # variables used in data.table functions in this function
   . <- NULL

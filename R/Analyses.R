@@ -47,7 +47,7 @@ CalculateTrainPredictYearPattern <- function(yearMin,yearMax,numPerYear1=1){
 #' @param v a
 #' @import data.table
 #' @export AnalyseYearLine
-AnalyseYearLine <- function(data,  v) {
+AnalyseYearLine <- function(data, v) {
   # variables used in data.table functions in this function
   . <- NULL
   value <- NULL
