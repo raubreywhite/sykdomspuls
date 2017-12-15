@@ -2,7 +2,7 @@
 % Please edit documentation in R/Analyses.R
 \name{AnalyseYearLine}
 \alias{AnalyseYearLine}
-\title{PROJ}
+\title{AnalyseYearLine}
 \usage{
 AnalyseYearLine(data, v)
 }
@@ -12,5 +12,5 @@ AnalyseYearLine(data, v)
 \item{v}{a}
 }
 \description{
-PROJ
+AnalyseYearLine
 }

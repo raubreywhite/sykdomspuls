@@ -3,8 +3,8 @@
 #' @param clean a
 #' @import data.table
 #' @import fhi
-#' @export IdentifyDatasets
-IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^partially_formatted_"),
+#' @export IdentifyAllDatasets
+IdentifyAllDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^partially_formatted_"),
                              clean=list.files(fhi::DashboardFolder("data_clean"),"done_")){
   # variables used in data.table functions in this function
   id <- isRaw <- isClean <- NULL
@@ -19,6 +19,37 @@ IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^p
   clean[,isClean:=TRUE]
   res <- merge(raw,clean,by="id",all=TRUE)
   setorder(res,id)
+
+  return(res)
+}
+
+#' test
+#' @param raw a
+#' @param clean a
+#' @import data.table
+#' @import fhi
+#' @export DeleteOldDatasets
+DeleteOldDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^partially_formatted_"),
+                             clean=list.files(fhi::DashboardFolder("data_clean"),"done_")){
+  res <- IdentifyAllDatasets(raw=raw,clean=clean)
+  if(nrow(res)>0){
+    res <- res[-nrow(res)]
+  }
+  for(i in 1:nrow(res)){
+    unlink(file.path(fhi::DashboardFolder("data_raw"),res[i]$raw))
+    unlink(file.path(fhi::DashboardFolder("data_clean"),sprintf("*%s*",res[i]$id)))
+  }
+}
+
+#' test
+#' @param raw a
+#' @param clean a
+#' @import data.table
+#' @import fhi
+#' @export IdentifyDatasets
+IdentifyDatasets <- function(raw=list.files(fhi::DashboardFolder("data_raw"),"^partially_formatted_"),
+                             clean=list.files(fhi::DashboardFolder("data_clean"),"done_")){
+  res <- IdentifyAllDatasets(raw=raw,clean=clean)
   if(nrow(res)>0) res <- res[nrow(res)]
 
   return(res)
@@ -371,6 +402,7 @@ UpdateData <- function(){
   isClean <- NULL
   Kontaktype <- NULL
   # end
+
   files <- IdentifyDatasets()
   files <- files[is.na(isClean)]
   if(nrow(files)==0){
@@ -389,6 +421,7 @@ UpdateData <- function(){
       d[,date:=data.table::as.IDate(date)]
 
       for(SYNDROME in CONFIG$SYNDROMES){
+        cat(sprintf("%s/%s/R/SYKDOMSPULS Processing %s",Sys.time(),Sys.getenv("COMPUTER"),SYNDROME),"\n")
         res <- FormatData(d[Kontaktype=="Legekontakt"], SYNDROME=SYNDROME)
         saveRDS(res,file=fhi::DashboardFolder("data_clean",
                                               sprintf("%s_%s_cleaned_legekontakt_everyone.RDS",
@@ -400,6 +433,7 @@ UpdateData <- function(){
                                                       files[i]$id,SYNDROME)))
       }
     }
+
     cat(sprintf("%s/%s/R/SYKDOMSPULS New data is now formatted and ready",Sys.time(),Sys.getenv("COMPUTER")),"\n")
     return(TRUE)
   }
