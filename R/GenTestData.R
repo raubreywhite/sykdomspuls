@@ -91,4 +91,42 @@ GenTestData <- function(){
 
   saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/data/formatted_meraker.RDS")
 
+  print(5)
+  set.seed(4)
+  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- d[municip %in% c("municip5001","municip1601")]
+  population <- readRDS(file.path("/git/dashboards_sykdomspuls/tests/testthat","data","pop.RDS"))
+  for(i in 1:length(population)){
+    if(!is.null(population[[i]])) population[[i]] <- population[[i]][municip %in% unique(d$municip)]
+  }
+  hellidager=readRDS(file.path("/git/dashboards_sykdomspuls/tests/testthat","data","hellidager.RDS"))
+
+  res <- sykdomspuls::FormatData(d,
+                                 SYNDROME="influensa",
+                                 population=population,
+                                 hellidager=hellidager,
+                                 testIfHelligdagIndikatorFileIsOutdated=FALSE)
+  res <- res[municip=="municip5001"]
+  res[,value:=value+sample(c(-10:10),.N,replace=T)]
+  res[value<0,value:=0]
+  res[,consultWithoutInfluensa:=consultWithoutInfluensa+sample(c(-10:10),.N,replace=T)]
+  res[,consultWithInfluensa:=consultWithoutInfluensa+value]
+
+  saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/data/formatted_trondheim.RDS")
+
+  print(6)
+  set.seed(4)
+  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- d[municip %in% c("municip1723","municip1756","municip5053")]
+
+  for(i in CONFIG$SYNDROMES){
+    d[get(i)<10,(i):=0]
+    d[,(i):=get(i)+rpois(.N,500)]
+  }
+  d[,consult:=influensa+gastro+respiratory+100+rpois(.N,500)]
+
+  saveRDS(d,file="/git/dashboards_sykdomspuls/tests/testthat/data/inderoy_partially_formatted_2017_05_09.RDS")
 }
+
+
+

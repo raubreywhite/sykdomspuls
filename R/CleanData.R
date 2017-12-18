@@ -304,26 +304,31 @@ FormatData <- function(d,SYNDROME,
 
   # POPULATION
 
-  lastYr <- as.numeric(population[[length(population)-2]]$year[1])
+  if(FALSE){
+    lastYr <- as.numeric(population[[length(population)-2]]$year[1])
 
-  population[[length(population)-1]] <- copy(population[[length(population)-2]])
-  population[[length(population)]] <- copy(population[[length(population)-2]])
+    population[[length(population)-1]] <- copy(population[[length(population)-2]])
+    population[[length(population)]] <- copy(population[[length(population)-2]])
 
-  population[[length(population)-1]][,year:=as.character(lastYr+1)]
-  population[[length(population)]][,year:=as.character(lastYr+2)]
+    population[[length(population)-1]][,year:=as.character(lastYr+1)]
+    population[[length(population)]][,year:=as.character(lastYr+2)]
 
-  population <- rbindlist(population)
-  population[,year:=as.numeric(year)]
+    population <- rbindlist(population)
+    population[,year:=as.numeric(year)]
 
-  dim(data)
-  data <- merge(data,population,by=c("municip","year","age"))
-  dim(data)
+    dim(data)
+    data <- merge(data,population,by=c("municip","year","age"), all.x=T)
+    dim(data)
+  } else {
+    data[,pop:=1]
+  }
 
   # KOMMUNE MERGING
+
   dim(data)
-  data <- merge(data,norwayMunicipMerging[,c("municip","year","municipEnd")],by=c("municip","year"))
+  data <- merge(data,norwayMunicipMerging[,c("municip","year","municipEnd")],by=c("municip","year"),all.x=T)
   dim(data)
-  data <- data[,
+  data <- data[!is.na(municipEnd),
                lapply(.SD, sum),
                by=.(municipEnd,year,age,date),
                .SDcols = c(SYNDROME_AND_INFLUENSA, 'consult', 'pop')]
@@ -368,6 +373,9 @@ FormatData <- function(d,SYNDROME,
                      "consultWithoutInfluensa",
                      "pop"))
   setnames(data,SYNDROME,"value")
+
+  setorder(data,municip,age,date)
+  setkey(data,municip,age,date)
 
   return(data)
 }

@@ -4,7 +4,7 @@
 \name{norwayMunicipMerging}
 \alias{norwayMunicipMerging}
 \title{norwayMunicipMerging}
-\format{An object of class \code{data.table} (inherits from \code{data.frame}) with 5149 rows and 8 columns.}
+\format{An object of class \code{data.table} (inherits from \code{data.frame}) with 5571 rows and 9 columns.}
 \usage{
 norwayMunicipMerging
 }
