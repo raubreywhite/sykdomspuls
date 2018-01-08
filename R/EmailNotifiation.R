@@ -60,6 +60,8 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
   - Et eller flere av fylkene har gul farge to av de tre siste ukene
   <br><br>
   Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
+  <br><br>
+  OBS: Nord og S\u00F8r-Tr\u00F8ndelag har fra 01.01.2018 blitt sl\u00E5tt sammen til Tr\u00F8ndelag. Det vil derfor bare v\u00E6re mulig \u00E5 finne Tr\u00F8ndelag i nedtrekkslisten for Fylkene.
   "
 
   if(Sys.getenv("COMPUTER")=="smhb" & sendEmail){
@@ -100,6 +102,8 @@ EmailNotificationKommuneLeger <- function(){
   Etter tilbakemelding fra en av pilotbrukerne har vi forbedret funksjonen p\u00E5 oversikt-siden.
   N\u00E5 er det mulig \u00E5 klikke p\u00E5 feltene i diagrammet p\u00E5 oversikt-siden.
   Du vil da komme direkte til ukentlig-siden der grafen vil vise samme sykdom/symptom, kommune og aldersgruppe som du klikket p\u00E5.
+  <br><br>
+  OBS: Nord og S\u00F8r-Tr\u00F8ndelag har fra 01.01.2018 blitt sl\u00E5tt sammen til Tr\u00F8ndelag. Det vil derfor bare v\u00E6re mulig \u00E5 finne Tr\u00F8ndelag i nedtrekkslisten for Fylkene.
   <br><br>
   Hilsen:<br>
   Sykdomspulsen ved Folkehelseinstituttet<br>
