@@ -69,8 +69,9 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
                             "Nye tall for Sykdomspulsen",
                             emailText)
 
-    CheckForOutbreaksUtbrudd()
-    EmailNotificationKommuneLeger()
+    try(CheckForOutbreaksUtbrudd(),TRUE)
+    try(EmailNotificationKommuneLeger(),TRUE)
+    try(EmailAlertExternal(),TRUE)
   }
   saveRDS(thisWeek,file=lastEmailedUtbruddFile)
 }
@@ -120,6 +121,86 @@ EmailNotificationKommuneLeger <- function(){
                         "Pilotprosjektet Sykdomspulsen til kommunehelsetjenesten er oppdatert med nye tall",
                         emailText,
                         emailFooter=FALSE)
+  }
+}
+
+#' test
+#' @param results a
+#' @importFrom RAWmisc Format
+#' @import fhi
+#' @export EmailAlertExternal
+EmailAlertExternal <- function(results=readRDS(fhi::DashboardFolder("results","outbreaks_alert_external.RDS"))){
+  # variables used in data.table functions in this function
+  output <- NULL
+  type <- NULL
+  locationName <- NULL
+  location <- NULL
+  age <- NULL
+  cumE1 <- NULL
+  zscore <- NULL
+  email <- NULL
+  # end
+
+  if(nrow(results)==0){
+    return(0)
+  }
+  emails <- unique(results$email)
+
+  emailHeader <-
+    "<style>
+html {
+  font-family: sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  border: 2px solid rgb(200,200,200);
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+
+td, th {
+  border: 1px solid rgb(190,190,190);
+  padding: 10px 20px;
+}
+
+th {
+  background-color: rgb(235,235,235);
+}
+
+td {
+  text-align: center;
+}
+
+tr:nth-child(even) td {
+  background-color: rgb(250,250,250);
+}
+
+tr:nth-child(odd) td {
+  background-color: rgb(245,245,245);
+}
+
+caption {
+  padding: 10px;
+}
+</style>"
+
+  results[,output:=sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>", type, locationName, location, age, round(cumE1), RAWmisc::Format(zscore,digits=2))]
+
+  for(em in emails){
+    r <- results[email %in% em]
+    if(nrow(r)==0){
+      next
+    }
+    emailText <- paste0(emailHeader,"Outbreaks:<br><br><table style='width:90%'><tr><th>Syndrome</th> <th>Location</th> <th>Location</th> <th>Age</th> <th>Excess</th> <th>Z-score</th></tr>")
+    for(i in 1:nrow(r)){
+      emailText <- sprintf("%s%s", emailText, r$output[i])
+    }
+    emailText <- sprintf("%s</table>", emailText)
+    fhi::DashboardEmailSpecific(emailBCC = em,
+                                emailSubject = "Outbreaks",
+                                emailText = emailText)
+    Sys.sleep(5)
   }
 }
 

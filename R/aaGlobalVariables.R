@@ -35,6 +35,19 @@ CONFIG$SYNDROMES_ALERT_INTERNAL <- c("influensa",
                                      "gastro",
                                      "respiratory")
 
+CONFIG$SYNDROMES_ALERT_EXTERNAL <- c("gastro",
+                                     "respiratory")
+
+CONFIG$AGES <- c(
+  "Totalt",
+  "0-4",
+  "5-14",
+  "15-19",
+  "20-29",
+  "30-64",
+  "65+"
+)
+
 #' norwayLocations
 #' @export norwayLocations
 norwayLocations <- GenNorwayLocations()

@@ -25,6 +25,7 @@ GenNorwayMunicipMerging <- function(){
   countyName <- NULL
   region <- NULL
   regionName <- NULL
+  realEnd <- NULL
   #end
 
   masterData <- data.table(readxl::read_excel(system.file("extdata", "norwayLocations.xlsx", package = "sykdomspuls")))
