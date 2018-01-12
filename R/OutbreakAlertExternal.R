@@ -21,8 +21,8 @@ OutbreakAlertExternal <- function(df=readRDS(fhi::DashboardFolder("results","res
   location <- NULL
   # end
 
-  df <- df[displayDay==max(displayDay)]
-  dk <- dk[displayDay==max(displayDay)]
+  df <- df[displayDay==max(displayDay) & type %in% CONFIG$SYNDROMES_ALERT_EXTERNAL]
+  dk <- dk[displayDay==max(displayDay) & type %in% CONFIG$SYNDROMES_ALERT_EXTERNAL]
 
   resultsk <- resultsf <- list()
   for(i in 1:nrow(alerts)){
