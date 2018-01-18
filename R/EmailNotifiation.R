@@ -66,8 +66,8 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
 
   if(Sys.getenv("COMPUTER")=="smhb" & sendEmail){
     #fhi::DashboardEmail("sykdomspuls_utbrudd",
-                            "Nye tall for Sykdomspulsen",
-                            emailText)
+    #                        "Nye tall for Sykdomspulsen",
+    #                        emailText)
 
     try(CheckForOutbreaksUtbrudd(),TRUE)
     try(EmailNotificationKommuneLeger(),TRUE)
