@@ -65,7 +65,7 @@ EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder
   "
 
   if(Sys.getenv("COMPUTER")=="smhb" & sendEmail){
-    fhi::DashboardEmail("sykdomspuls_utbrudd",
+    #fhi::DashboardEmail("sykdomspuls_utbrudd",
                             "Nye tall for Sykdomspulsen",
                             emailText)
 
