@@ -5,10 +5,14 @@
 \title{test}
 \usage{
 EmailAlertExternal(results = readRDS(fhi::DashboardFolder("results",
-  "outbreaks_alert_external.RDS")))
+  "outbreaks_alert_external.RDS")),
+  alerts = readxl::read_excel(file.path("/etc", "gmailr",
+  "emails_sykdomspuls_alert.xlsx")))
 }
 \arguments{
 \item{results}{a}
+
+\item{alerts}{a}
 }
 \description{
 test
