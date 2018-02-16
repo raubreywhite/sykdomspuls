@@ -149,7 +149,7 @@ EmailInternal <- function(
                           emailText)
     }
   }
-
+  return(0)
 }
 
 
