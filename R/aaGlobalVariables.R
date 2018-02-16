@@ -19,15 +19,15 @@ variablesAlgorithmProduced <- c("threshold0","threshold2","threshold4","threshol
 CONFIG <- new.env(parent = emptyenv())
 CONFIG$VERSION <- 1
 CONFIG$VERSIONS <- 1:2
-CONFIG$SYNDROMES_DOCTOR <- c("influensa")
+CONFIG$SYNDROMES_DOCTOR <- c("Influensa"="influensa")
 CONFIG$SYNDROMES_ALL <- c("gastro",
                           "respiratory",
                           "respiratoryinternal",
                           "respiratoryexternal",
                           "lungebetennelse",
                           "bronkitt")
-CONFIG$SYNDROMES_ALL <- c("gastro",
-                          "respiratory")
+CONFIG$SYNDROMES_ALL <- c("Mage-tarminfeksjoner"="gastro",
+                          "Luftveisinfeksjoner"="respiratory")
 
 CONFIG$SYNDROMES <- c(CONFIG$SYNDROMES_DOCTOR, CONFIG$SYNDROMES_ALL)
 

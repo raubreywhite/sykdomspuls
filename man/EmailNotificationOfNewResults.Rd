@@ -4,7 +4,12 @@
 \alias{EmailNotificationOfNewResults}
 \title{test}
 \usage{
-EmailNotificationOfNewResults()
+
+  EmailNotificationOfNewResults(lastEmailedUtbruddFile = fhi::DashboardFolder("results",
+  "lastEmailedUtbrudd.RDS"))
+}
+\arguments{
+\item{lastEmailedUtbruddFile}{a}
 }
 \description{
 test

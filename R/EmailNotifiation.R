@@ -20,70 +20,150 @@ Files being processed are: ",paste0(files,collapse=", "),"
 
 #' test
 #' @import fhi
-#' @export EmailNotificationOfNewResults
-EmailNotificationOfNewResults <- function(){
+#' @export EmailTechnicalNewResults
+EmailTechnicalNewResults <- function(){
   emailText <- "
   New Sykdomspulsen results available at <a href='http://smhb.fhi.no/'>http://smhb.fhi.no/</a>
   "
   if(Sys.getenv("COMPUTER")=="smhb"){
     fhi::DashboardEmail("sykdomspuls_results",
-                            "New Sykdomspuls results available",
-                            emailText)
+                        "New Sykdomspuls results available",
+                        emailText)
   }
 }
 
 #' test
-#' @param lastEmailedUtbruddFile a
+#' @param resYearLine a
+#' @param isTest a
 #' @import fhi
-#' @importFrom lubridate today
-#' @export EmailNotificationUtbrudd
-EmailNotificationUtbrudd <- function(lastEmailedUtbruddFile=fhi::DashboardFolder("results","lastEmailedUtbrudd.RDS")){
-  thisWeek <- format.Date(lubridate::today(),"%U")
-  sendEmail <- TRUE
+#' @import data.table
+#' @export EmailInternal
+EmailInternal <- function(
+  resYearLine=readRDS(fhi::DashboardFolder("results","resYearLine.RDS")),
+  isTest=TRUE){
+  # variables used in data.table functions in this function
+  status <- NULL
+  location <- NULL
+  statusNum0 <- NULL
+  statusNum1 <- NULL
+  statusNum2 <- NULL
+  statusSum2weeks <- NULL
+  statusSum3weeks <- NULL
+  statusYellow <- NULL
+  statusRed <- NULL
+  age <- NULL
+  wkyr <- NULL
+  type <- NULL
+  # end
 
-  if(file.exists(lastEmailedUtbruddFile)){
-    x <- readRDS(lastEmailedUtbruddFile)
-    if(thisWeek==x){
-      sendEmail <- FALSE
+  currentWeek <- max(resYearLine$wkyr)
+
+  resYearLine[,statusNum0:=0]
+  resYearLine[status=="Medium",statusNum0:=1]
+  resYearLine[status=="High",statusNum0:=2]
+  resYearLine[,statusNum1:=shift(statusNum0),by=location]
+  resYearLine[,statusNum2:=shift(statusNum0,n=2L),by=location]
+  resYearLine[,statusSum2weeks:=as.numeric(statusNum0==2)+as.numeric(statusNum1==2)]
+  resYearLine[,statusSum3weeks:=as.numeric(statusNum0>=1)+as.numeric(statusNum1>=1)+as.numeric(statusNum2>=1)]
+
+  resYearLine[,statusYellow:=0]
+  resYearLine[statusSum3weeks>=2,statusYellow:=1]
+
+  resYearLine[,statusRed:=0]
+  resYearLine[statusSum2weeks>=1,statusRed:=1]
+
+  resYearLine <- resYearLine[age=="Totalt"]
+  outbreaks <- resYearLine[statusYellow==1 | statusRed==1,c("wkyr","type","location","locationName","status","statusYellow","statusRed"),with=F]
+  setorder(outbreaks,-wkyr,location)
+
+  outbreaksGastro <- unique(outbreaks[wkyr==currentWeek & type=="gastro"]$locationName)
+  outbreaksRespiratory <- unique(outbreaks[wkyr==currentWeek & type=="respiratoryinternal"]$locationName)
+  outbreaksInfluensa <- unique(outbreaks[wkyr==currentWeek & type=="influensa"]$locationName)
+  outbreaksLungebetennelse <- unique(outbreaks[wkyr==currentWeek & type=="lungebetennelse"]$locationName)
+  outbreaksBronkitt <- unique(outbreaks[wkyr==currentWeek & type=="bronkitt"]$locationName)
+
+  if(length(outbreaksGastro)>0 |
+     length(outbreaksRespiratory)>0 |
+     length(outbreaksInfluensa)>0 |
+     length(outbreaksLungebetennelse)>0 |
+     length(outbreaksBronkitt)>0){
+
+    outbreaksGastro <- paste0(outbreaksGastro,collapse=", ")
+    outbreaksRespiratory <- paste0(outbreaksRespiratory,collapse=", ")
+    outbreaksInfluensa <- paste0(outbreaksInfluensa,collapse=", ")
+    outbreaksLungebetennelse <- paste0(outbreaksLungebetennelse,collapse=", ")
+    outbreaksBronkitt <- paste0(outbreaksBronkitt,collapse=", ")
+
+    if(outbreaksGastro=="") outbreaksGastro <- "Ingen"
+    if(outbreaksRespiratory=="") outbreaksRespiratory <- "Ingen"
+    if(outbreaksInfluensa=="") outbreaksInfluensa <- "Ingen"
+    if(outbreaksLungebetennelse=="") outbreaksLungebetennelse <- "Ingen"
+    if(outbreaksBronkitt=="") outbreaksBronkitt <- "Ingen"
+
+    emailText <- sprintf("
+                         OBS-Varsel fra Sykdomspulsen uke %s:
+                         <br><br>
+                         OBS varslet er basert p\u00E5 oversiktsbildet for de siste ukene for mage-tarminfeksjoner, luftveisinfeksjoner, og influensa.<br>
+                         Det blir generert et varsel dersom:<br>
+                         - Et eller flere av fylkene har r\u00F8d farge en av de to siste ukene<br>
+                         - Et eller flere av fylkene har gul farge to av de tre siste ukene
+                         <br><br>
+                         Ved OBS varsel b\u00F8r mottaksansvarlig melde ifra til fagansvarlig i riktig avdeling.
+                         <br><br>
+                         <br><br>
+                         Mage-tarminfeksjoner:
+                         <br>
+                         %s
+                         <br><br>
+                         Luftveisinfeksjoner:
+                         <br>
+                         %s
+                         <br><br>
+                         Influensa:
+                         <br>
+                         %s
+                         <br><br>
+                         Lungebetennelse:
+                         <br>
+                         %s
+                         <br><br>
+                         Akutt bronkitt/bronkiolitt:
+                         <br>
+                         %s
+                         <br><br>
+                         Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
+                         ",currentWeek,
+                         outbreaksGastro,
+                         outbreaksRespiratory,
+                         outbreaksInfluensa,
+                         outbreaksLungebetennelse,
+                         outbreaksBronkitt)
+
+    if(isTest){
+      fhi::DashboardEmail("test",
+                          emailSubject="TESTING EmailInternal",
+                          emailText)
+    } else {
+      fhi::DashboardEmail("sykdomspuls_utbrudd",
+                          sprintf("OBS-Varsel fra Sykdomspulsen uke %s",currentWeek),
+                          emailText)
     }
   }
-  emailText <- "
-  Sykdomspulsen sin interne utbruddsoverv\u00E5kning er n\u00E5 oppdatert med nye tall.
-  <br><br>
-  Innlogging:<br>
-  <a href='http://smhb.fhi.no/'>http://smhb.fhi.no/</a><br>
-  NB! Bruk Google Chrome n\u00E5r du logger deg inn!<br>
-  Brukernavn og passord st\u00E5r i arbeidsrutiner for utbruddsansvarlig.
-  <br><br>
-  Se p\u00E5 oversiktsbilde for de siste ukene for b\u00E5de mage-tarminfeksjoner og \u00F8vre luftveisinfeksjoner og meld ifra til fagansvarlig dersom:<br>
-  - Et eller flere av fylkene har r\u00F8d farge en av de to siste ukene<br>
-  - Et eller flere av fylkene har gul farge to av de tre siste ukene
-  <br><br>
-  Se ogs\u00E5 p\u00E5 Signaler (ukentlig) b\u00E5de for fylker og kommuner og meld ifra til fagansvarlig dersom det st\u00E5r noe p\u00E5 disse sidene.
-  <br><br>
-  OBS: Nord og S\u00F8r-Tr\u00F8ndelag har fra 01.01.2018 blitt sl\u00E5tt sammen til Tr\u00F8ndelag. Det vil derfor bare v\u00E6re mulig \u00E5 finne Tr\u00F8ndelag i nedtrekkslisten for Fylkene.
-  "
 
-  if(Sys.getenv("COMPUTER")=="smhb" & sendEmail){
-    #fhi::DashboardEmail("sykdomspuls_utbrudd",
-    #                        "Nye tall for Sykdomspulsen",
-    #                        emailText)
-
-    try(CheckForOutbreaksUtbrudd(),TRUE)
-    try(EmailAlertExternal(),TRUE)
-  }
-  saveRDS(thisWeek,file=lastEmailedUtbruddFile)
 }
+
 
 #' test
 #' @param results a
 #' @param alerts a
+#' @param isTest a
 #' @importFrom RAWmisc Format
 #' @import fhi
-#' @export EmailAlertExternal
-EmailAlertExternal <- function(
+#' @export EmailExternal
+EmailExternal <- function(
   results=readRDS(fhi::DashboardFolder("results","outbreaks_alert_external.RDS")),
-  alerts = readxl::read_excel(file.path("/etc", "gmailr", "emails_sykdomspuls_alert.xlsx"))){
+  alerts = readxl::read_excel(file.path("/etc", "gmailr", "emails_sykdomspuls_alert.xlsx")),
+  isTest = TRUE){
   # variables used in data.table functions in this function
   output <- NULL
   type <- NULL
@@ -97,12 +177,15 @@ EmailAlertExternal <- function(
   county <- NULL
   # end
 
-  if(Sys.getenv("COMPUTER")!="smhb"){
-    alerts <- readxl::read_excel(file.path("/etc", "gmailr", "emails_sykdomspuls_alert_test.xlsx"))
-  }
-
   setDT(alerts)
   emails <- unique(alerts$email)
+
+  if(isTest){
+    emailSubject <- "TESTING EmailAlertExternal"
+    if(length(unique(alerts$email))>1) stop("THIS IS NOT A TEST EMAIL DATASET")
+  } else {
+    emailSubject <- "Nye Sykdomspulsen resultater"
+  }
 
   emailHeader <-
     "<style>
@@ -188,17 +271,19 @@ EmailAlertExternal <- function(
     }
     emailText <- sprintf("%s</table><br><br>", emailText)
 
-    # if(nrow(r)==0){
-    #   emailText <- paste0(emailText,"Outbreaks:<br><br>No outbreaks recorded")
-    # } else {
-    #   emailText <- paste0(emailText,"Outbreaks:<br><br><table style='width:90%'><tr><th>Til nettsiden</th> <th>Syndrome</th> <th>Location</th> <th>Location</th> <th>Age</th> <th>Excess</th> <th>Z-score</th></tr>")
-    #   for(i in 1:nrow(r)){
-    #     emailText <- sprintf("%s%s", emailText, r$output[i])
-    #   }
-    #   emailText <- sprintf("%s</table>", emailText)
-    # }
+    if(isTest){
+      if(nrow(r)==0){
+        emailText <- paste0(emailText,"Outbreaks:<br><br>No outbreaks recorded")
+      } else {
+        emailText <- paste0(emailText,"Outbreaks:<br><br><table style='width:90%'><tr><th>Til nettsiden</th> <th>Syndrome</th> <th>Location</th> <th>Location</th> <th>Age</th> <th>Excess</th> <th>Z-score</th></tr>")
+        for(i in 1:nrow(r)){
+          emailText <- sprintf("%s%s", emailText, r$output[i])
+        }
+        emailText <- sprintf("%s</table>", emailText)
+      }
+    }
     fhi::DashboardEmailSpecific(emailBCC = em,
-                                emailSubject = "Outbreaks",
+                                emailSubject = emailSubject,
                                 emailText = emailText)
     Sys.sleep(5)
   }
@@ -216,4 +301,29 @@ EmailNotificationOfFailedResults <- function(){
                             "New Sykdomspuls results available",
                             emailText)
   }
+}
+
+
+#' test
+#' @param lastEmailedUtbruddFile a
+#' @import fhi
+#' @importFrom lubridate today
+#' @export EmailNotificationOfNewResults
+EmailNotificationOfNewResults <- function(lastEmailedUtbruddFile=fhi::DashboardFolder("results","lastEmailedUtbrudd.RDS")){
+  thisWeek <- format.Date(lubridate::today(),"%U")
+  sendEmail <- TRUE
+
+  if(file.exists(lastEmailedUtbruddFile)){
+    x <- readRDS(lastEmailedUtbruddFile)
+    if(thisWeek==x){
+      sendEmail <- FALSE
+    }
+  }
+
+  try(EmailTechnicalNewResults(),TRUE)
+  if(Sys.getenv("COMPUTER")=="smhb" & sendEmail){
+    try(EmailInternal(isTest=FALSE),TRUE)
+    try(EmailExternal(isTest=FALSE),TRUE)
+  }
+  saveRDS(thisWeek,file=lastEmailedUtbruddFile)
 }
