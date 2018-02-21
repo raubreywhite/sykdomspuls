@@ -86,7 +86,8 @@ EmailInternal <- function(
      length(outbreaksRespiratory)>0 |
      length(outbreaksInfluensa)>0 |
      length(outbreaksLungebetennelse)>0 |
-     length(outbreaksBronkitt)>0){
+     length(outbreaksBronkitt)>0 |
+     isTest){
 
     outbreaksGastro <- paste0(outbreaksGastro,collapse=", ")
     outbreaksRespiratory <- paste0(outbreaksRespiratory,collapse=", ")
@@ -182,7 +183,7 @@ EmailExternal <- function(
 
   if(isTest){
     emailSubject <- "TESTING EmailAlertExternal"
-    if(length(unique(alerts$email))>1) stop("THIS IS NOT A TEST EMAIL DATASET")
+    if(length(unique(alerts$email))!=3) stop("THIS IS NOT A TEST EMAIL DATASET")
   } else {
     emailSubject <- "Nye Sykdomspulsen resultater"
   }
