@@ -292,7 +292,7 @@ emailYesOutbreak <-
 
     noOutbreak <- nrow(r)==0
     if(forceNoOutbreak) noOutbreak <- TRUE
-    if(forceYesOutbrea) noOutbreak <- FALSE
+    if(forceYesOutbreak) noOutbreak <- FALSE
 
     # no outbreaks
     if(noOutbreak){
