@@ -185,7 +185,7 @@ EmailExternal <- function(
     emailSubject <- "TESTING EmailAlertExternal"
     if(length(unique(alerts$email))!=3) stop("THIS IS NOT A TEST EMAIL DATASET")
   } else {
-    emailSubject <- "Nye Sykdomspulsen resultater"
+    emailSubject <- "OBS varsel fra Sykdomspulsen uke xxx"
   }
 
   emailHeader <-
