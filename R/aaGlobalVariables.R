@@ -26,17 +26,31 @@ CONFIG$SYNDROMES_ALL <- c("gastro",
                           "respiratoryexternal",
                           "lungebetennelse",
                           "bronkitt")
-CONFIG$SYNDROMES_ALL <- c("Mage-tarminfeksjoner"="gastro",
-                          "Luftveisinfeksjoner"="respiratory")
+CONFIG$SYNDROMES_ALL <- c("Mage-tarm diagnose"="gastro",
+                          "Øvre-luftvei diagnose"="respiratory")
 
 CONFIG$SYNDROMES <- c(CONFIG$SYNDROMES_DOCTOR, CONFIG$SYNDROMES_ALL)
 
-CONFIG$SYNDROMES_ALERT_INTERNAL <- c("influensa",
-                                     "gastro",
-                                     "respiratory")
+CONFIG$SYNDROMES_ALERT_INTERNAL <- c(
+  "influensa",
+  "gastro",
+  "respiratory")
 
-CONFIG$SYNDROMES_ALERT_EXTERNAL <- c("gastro",
-                                     "respiratory")
+CONFIG$SYNDROMES_ALERT_EXTERNAL <- c(
+  "gastro",
+  "respiratory")
+
+CONFIG$SYNDROMES_SHORT <- c(
+  "Influensa"="influensa",
+  "Mage-tarm"="gastro",
+  "Luftvei"="respiratory",
+  "Luftvei"="respiratoryinternal",
+  "Luftvei"="respiratoryexternal",
+  "Bronkitt"="lungebetennelse"
+  )
+
+# remove any excess short syndromes
+CONFIG$SYNDROMES_SHORT <- CONFIG$SYNDROMES_SHORT[CONFIG$SYNDROMES_SHORT %in% CONFIG$SYNDROMES]
 
 CONFIG$AGES <- c(
   "Totalt",
