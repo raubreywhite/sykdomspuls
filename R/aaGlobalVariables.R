@@ -27,7 +27,7 @@ CONFIG$SYNDROMES_ALL <- c("gastro",
                           "lungebetennelse",
                           "bronkitt")
 CONFIG$SYNDROMES_ALL <- c("Mage-tarm diagnose"="gastro",
-                          "Øvre-luftvei diagnose"="respiratory")
+                          "\u00D8vre-luftvei diagnose"="respiratory")
 
 CONFIG$SYNDROMES <- c(CONFIG$SYNDROMES_DOCTOR, CONFIG$SYNDROMES_ALL)
 
