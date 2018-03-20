@@ -23,6 +23,8 @@ Files being processed are: ",paste0(files,collapse=", "),"
                         "New Sykdomspuls data",
                         emailText)
   }
+
+  return(0)
 }
 
 #' test
