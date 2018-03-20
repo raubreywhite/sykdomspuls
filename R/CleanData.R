@@ -418,7 +418,7 @@ UpdateData <- function(){
     return(FALSE)
   } else {
     cat(sprintf("%s/%s/R/SYKDOMSPULS Updating data",Sys.time(),Sys.getenv("COMPUTER")),"\n")
-    EmailNotificationOfNewData(files$id)
+    if(Sys.getenv("COMPUTER")=="smhb") EmailNotificationOfNewData(files$id, isTest=FALSE)
     for(i in 1:nrow(files)){
       if(!RAWmisc::IsFileStable(fhi::DashboardFolder("data_raw",files[i]$raw))){
       	cat(sprintf("%s/%s/R/SYKDOMSPULS Unstable file %s",Sys.time(),Sys.getenv("COMPUTER"),files[i]$raw),"\n")

@@ -4,10 +4,12 @@
 \alias{EmailNotificationOfNewData}
 \title{test}
 \usage{
-EmailNotificationOfNewData(files)
+EmailNotificationOfNewData(files, isTest = TRUE)
 }
 \arguments{
 \item{files}{a}
+
+\item{isTest}{a}
 }
 \description{
 test

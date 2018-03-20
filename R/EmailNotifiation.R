@@ -1,20 +1,27 @@
 #' test
 #' @param files a
+#' @param isTest a
 #' @import fhi
 #' @export EmailNotificationOfNewData
-EmailNotificationOfNewData <- function(files){
+EmailNotificationOfNewData <- function(files, isTest=TRUE){
   emailText <- paste0(
 "New Sykdomspulsen data has been received and signal processing has begun.
 <br><br>
 New results should be available in around two hours.
 <br><br>
+Syndromes being processed are: ",paste0(CONFIG$SYNDROMES,collapse=", "),"
+<br><br>
 Files being processed are: ",paste0(files,collapse=", "),"
 ")
 
-  if(Sys.getenv("COMPUTER")=="smhb"){
+  if(isTest){
+    fhi::DashboardEmail("test",
+                        emailSubject="TESTING EmailNotificationOfNewData",
+                        emailText)
+  } else {
     fhi::DashboardEmail("sykdomspuls_data",
-                             "New Sykdomspuls data",
-                             emailText)
+                        "New Sykdomspuls data",
+                        emailText)
   }
 }
 
