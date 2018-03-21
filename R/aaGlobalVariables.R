@@ -20,32 +20,31 @@ CONFIG <- new.env(parent = emptyenv())
 CONFIG$VERSION <- 1
 CONFIG$VERSIONS <- 1:2
 CONFIG$SYNDROMES_DOCTOR <- c("Influensa"="influensa")
-CONFIG$SYNDROMES_ALL <- c("gastro",
-                          "respiratory",
-                          "respiratoryinternal",
-                          "respiratoryexternal",
-                          "lungebetennelse",
-                          "bronkitt")
 CONFIG$SYNDROMES_ALL <- c("Mage-tarm diagnose"="gastro",
-                          "\u00D8vre-luftvei diagnose"="respiratory")
+                          "\u00D8vre-luftvei diagnose"="respiratoryinternal",
+                          "\u00D8vre-luftvei diagnose"="respiratoryexternal",
+                          "Lungebetennelse diagnose"="lungebetennelse",
+                          "Bronkitt diagnose"="bronkitt")
 
 CONFIG$SYNDROMES <- c(CONFIG$SYNDROMES_DOCTOR, CONFIG$SYNDROMES_ALL)
 
 CONFIG$SYNDROMES_ALERT_INTERNAL <- c(
   "influensa",
   "gastro",
-  "respiratory")
+  "respiratoryinternal",
+  "lungebetennelse",
+  "bronkitt")
 
 CONFIG$SYNDROMES_ALERT_EXTERNAL <- c(
   "gastro",
-  "respiratory")
+  "respiratoryexternal")
 
 CONFIG$SYNDROMES_SHORT <- c(
   "Influensa"="influensa",
   "Mage-tarm"="gastro",
-  "Luftvei"="respiratory",
   "Luftvei"="respiratoryinternal",
   "Luftvei"="respiratoryexternal",
+  "Lungebet"="lungebetennelse",
   "Bronkitt"="lungebetennelse"
   )
 
