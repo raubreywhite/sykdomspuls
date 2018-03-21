@@ -45,7 +45,7 @@ CONFIG$SYNDROMES_SHORT <- c(
   "Luftvei"="respiratoryinternal",
   "Luftvei"="respiratoryexternal",
   "Lungebet"="lungebetennelse",
-  "Bronkitt"="lungebetennelse"
+  "Bronkitt"="bronkitt"
   )
 
 # remove any excess short syndromes
