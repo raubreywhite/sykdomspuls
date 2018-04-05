@@ -169,7 +169,7 @@ EmailInternal <- function(
 #' @param isTest a
 #' @param forceNoOutbreak a
 #' @param forceYesOutbreak a
-#' @importFrom RAWmisc Format
+#' @importFrom RAWmisc Format RecodeDT
 #' @import fhi
 #' @export EmailExternal
 EmailExternal <- function(
@@ -293,6 +293,8 @@ emailYesOutbreak <-
 
   results[,link:=sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>",county,location,type,age)]
   results[is.na(county),link:=sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>",location,location,type,age)]
+  # this turns "dirty" type (eg gastro) into "pretty" type (e.g. mage-tarm syndrome)
+  RAWmisc::RecodeDT(results,switch=CONFIG$SYNDROMES,var="type",oldOnLeft=FALSE)
   results[,output:=sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>", link, type, locationName, location, age, round(cumE1), RAWmisc::Format(zscore,digits=2))]
 
   for(em in emails){
