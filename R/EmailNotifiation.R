@@ -327,7 +327,7 @@ EmailExternal <- function(
     }
 
     # include registered places
-    emailText <- paste0(emailText, "Registered for outbreaks in:<br><br><table style='width:90%'><tr><th>location</th></tr>")
+    emailText <- paste0(emailText, "Du er registrert for \u00E5 motta varsel om utbrudd i:<br><br><table style='width:90%'><tr><th>location</th></tr>")
     for (i in 1:nrow(a)) {
       emailText <- sprintf("%s%s", emailText, a$output[i])
     }
@@ -335,9 +335,9 @@ EmailExternal <- function(
 
     # include outbreaks
     if (noOutbreak) {
-      emailText <- paste0(emailText, "Outbreaks:<br><br>No outbreaks recorded")
+      emailText <- paste0(emailText, "Utbrudd:<br><br>Ingen utbrudd registrert")
     } else {
-      emailText <- paste0(emailText, "Outbreaks:<br><br><table style='width:90%'><tr><th>Til nettsiden</th> <th>Syndrome</th> <th>Location</th> <th>Location</th> <th>Age</th> <th>Excess</th> <th>Z-score</th></tr>")
+      emailText <- paste0(emailText, "Utbrudd:<br><br><table style='width:90%'><tr><th>Til nettsiden</th> <th>Syndrom</th> <th>Geografisk omr\u00E5de</th> <th>Geografisk omr\u00E5de</th> <th>Alder</th> <th>Eksess</th> <th>Z-verdi</th></tr>")
       if (nrow(r) > 0) {
         for (i in 1:nrow(r)) {
           emailText <- sprintf("%s%s", emailText, r$output[i])
