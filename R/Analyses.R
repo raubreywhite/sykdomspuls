@@ -183,6 +183,11 @@ RunOneAnalysis <- function(analysesStack,analysisData){
   retval[, location := analysesStack$location]
   retval[, locationName := GetLocationName(analysesStack$location, norwayLocations=norwayLocations)]
 
+  # make threshold2 minimum of 2 and threshold4 minimum of 3
+  retval[threshold2<2, threshold2:=2]
+  retval[threshold4<3, threshold4:=3]
+
+  # create "normal", "medium", "high" categories
   retval[, status := "Normal"]
   retval[n > 1 & n > threshold2, status := "Medium"]
   retval[n > 1 & n > threshold4, status := "High"]
