@@ -1,6 +1,5 @@
 context("GenerateOutbreakListExternal")
 
-if(FALSE){
 test_that("Basic example", {
   library(data.table)
 
@@ -45,4 +44,3 @@ test_that("Basic example 2", {
 
   expect_equal(nrow(res),length(CONFIG$SYNDROMES_ALERT_EXTERNAL))
 })
-}
