@@ -174,6 +174,46 @@ EmailInternal <- function(
   return(0)
 }
 
+#' EmailExternalGenerateTable
+#' @param results a
+#' @param xtype a
+#' @param xemail a
+#' @import data.table
+#' @importFrom RAWmisc Format RecodeDT
+#' @export EmailExternalGenerateTable
+EmailExternalGenerateTable <- function(results,xtype,xemail){
+  . <- NULL
+  zscore <- NULL
+  link <- NULL
+  county <- NULL
+  location <- NULL
+  type <- NULL
+  age <- NULL
+  type_pretty <- NULL
+  output <- NULL
+  locationName <- NULL
+  cumE1 <- NULL
+  email <- NULL
+
+  setorder(results,zscore)
+  results[, link := sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>", county, location, type, age)]
+  results[is.na(county), link := sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>", location, location, type, age)]
+  # this turns "dirty" type (eg gastro) into "pretty" type (e.g. mage-tarm syndrome)
+  results[,type_pretty:=type]
+  RAWmisc::RecodeDT(results, switch = CONFIG$SYNDROMES, var = "type_pretty", oldOnLeft = FALSE)
+  results[, output := sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>", link, type_pretty, locationName, location, age, round(cumE1), RAWmisc::Format(zscore, digits = 2))]
+
+  r <- results[email == xemail & type==xtype]
+  if(nrow(r)==0) return(sprintf("%s utbrudd:<br><br>Ingen utbrudd registrert",names(CONFIG$SYNDROMES)[CONFIG$SYNDROMES==xtype]))
+
+  emailText <- sprintf("%s utbrudd:<br><br><table style='width:90%'><tr><th>Til nettsiden</th> <th>Syndrom</th> <th>Geografisk omr\u00E5de</th> <th>Geografisk omr\u00E5de</th> <th>Alder</th> <th>Eksess</th> <th>Z-verdi</th></tr>",names(CONFIG$SYNDROMES)[CONFIG$SYNDROMES==xtype])
+  for (i in 1:nrow(r)) {
+    emailText <- sprintf("%s%s", emailText, r$output[i])
+  }
+  emailText <- sprintf("%s</table>", emailText)
+
+  return(emailText)
+}
 
 #' test
 #' @param results a
@@ -303,12 +343,6 @@ EmailExternal <- function(
 
   alerts[, output := sprintf("<tr> <td>%s</td> </tr>", location)]
 
-  results[, link := sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>", county, location, type, age)]
-  results[is.na(county), link := sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>", location, location, type, age)]
-  # this turns "dirty" type (eg gastro) into "pretty" type (e.g. mage-tarm syndrome)
-  RAWmisc::RecodeDT(results, switch = CONFIG$SYNDROMES, var = "type", oldOnLeft = FALSE)
-  results[, output := sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>", link, type, locationName, location, age, round(cumE1), RAWmisc::Format(zscore, digits = 2))]
-
   for (em in emails) {
     r <- results[email %in% em]
     a <- alerts[email %in% em]
@@ -334,16 +368,8 @@ EmailExternal <- function(
     emailText <- sprintf("%s</table><br><br>", emailText)
 
     # include outbreaks
-    if (noOutbreak) {
-      emailText <- paste0(emailText, "Utbrudd:<br><br>Ingen utbrudd registrert")
-    } else {
-      emailText <- paste0(emailText, "Utbrudd:<br><br><table style='width:90%'><tr><th>Til nettsiden</th> <th>Syndrom</th> <th>Geografisk omr\u00E5de</th> <th>Geografisk omr\u00E5de</th> <th>Alder</th> <th>Eksess</th> <th>Z-verdi</th></tr>")
-      if (nrow(r) > 0) {
-        for (i in 1:nrow(r)) {
-          emailText <- sprintf("%s%s", emailText, r$output[i])
-        }
-      }
-      emailText <- sprintf("%s</table>", emailText)
+    for(type in CONFIG$SYNDROMES_ALERT_EXTERNAL){
+      emailText <- paste0(emailText,EmailExternalGenerateTable(results=r,xtype=type,xemail=em),"<br><br>")
     }
 
     fhi::DashboardEmailSpecific(

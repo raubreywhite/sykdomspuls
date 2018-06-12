@@ -212,6 +212,9 @@ QuasipoissonTrainPredictData = function(
   if(isDaily){
     return(datasetPredict[,c(variablesAlgorithmDaily,variablesAlgorithmBasic,variablesAlgorithmProduced),with=F])
   } else {
+    # adding in some necessary variables
+    datasetPredict <- AddXToWeekly(datasetPredict)
+    datasetPredict <- AddWkyrAndDisplayDateToWeekly(datasetPredict)
     return(datasetPredict[,c(variablesAlgorithmWeekly,variablesAlgorithmBasic,variablesAlgorithmProduced),with=F])
   }
 }

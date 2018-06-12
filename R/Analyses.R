@@ -42,6 +42,71 @@ CalculateTrainPredictYearPattern <- function(yearMin,yearMax,numPerYear1=1){
   return(years)
 }
 
+#' AddXToWeekly
+#' @param data d
+#' @import data.table
+#' @export AddXToWeekly
+AddXToWeekly <- function(data){
+  week <- NULL
+  x <- NULL
+
+  data[week>=30,x:=week-29]
+  data[week<30,x:=week+23]
+
+  return(data)
+}
+
+#' AddWkyrAndDisplayDateToWeekly
+#' @param data d
+#' @import data.table
+#' @export AddWkyrAndDisplayDateToWeekly
+AddWkyrAndDisplayDateToWeekly <- function(data){
+  . <- NULL
+  wkyr <- NULL
+  year <- NULL
+  week <- NULL
+  day <- NULL
+
+  data[, wkyr := paste0(year, "-", formatC(week, flag = "0", width = 2))]
+
+  dates <- data.table(day = seq.Date(as.Date("2000-01-01"), as.Date("2030-01-01"), by = "days"))
+  dates[, wkyr := format.Date(day, format = "%G-%V")]
+  dates <- dates[, .(displayDay = max(day)), by = .(wkyr)]
+  data <- merge(data, dates, by = "wkyr")
+
+  return(data)
+}
+
+#' DetermineStatus
+#' @param data d
+#' @import data.table
+#' @export DetermineStatus
+DetermineStatus <- function(data){
+  status <- NULL
+  n <- NULL
+  threshold2 <- NULL
+  threshold4 <- NULL
+
+  # create "normal", "medium", "high" categories
+  data[, status := "Normal"]
+  data[n > 1 & n > threshold2, status := "Medium"]
+  data[n > 1 & n > threshold4, status := "High"]
+}
+
+#' AddCounty
+#' @param data d
+#' @param loc a
+#' @import data.table
+#' @export AddCounty
+AddCounty <- function(data,loc){
+
+
+  county <- GetCountyFromMunicip(loc, norwayLocations=norwayLocations)
+  if(county != loc){
+    data[, county := county]
+  }
+}
+
 #' AnalyseYearLine
 #' @param data a
 #' @param v a
@@ -86,15 +151,7 @@ AnalyseYearLine <- function(data, v) {
   res <- rbindlist(res)
   res <- res[!is.na(threshold2)]
 
-  res[week>=30,x:=week-29]
-  res[week<30,x:=week+23]
-  res[, wkyr := paste0(year, "-", formatC(week, flag = "0", width = 2))]
-
-  dates <- data.table(day = seq.Date(as.Date("2000-01-01"), as.Date("2030-01-01"), by = "days"))
-  dates[, wkyr := format.Date(day, format = "%G-%V")]
-  dates <- dates[, .(displayDay = max(day)), by = .(wkyr)]
-  res <- merge(res, dates, by = "wkyr")
-  res <- res[,c("displayDay", "wkyr", "x", variablesAlgorithmWeekly, variablesAlgorithmBasic, variablesAlgorithmProduced),with=F]
+  res <- res[,c(variablesAlgorithmWeekly, variablesAlgorithmBasic, variablesAlgorithmProduced),with=F]
   return(res)
 }
 
@@ -188,9 +245,14 @@ RunOneAnalysis <- function(analysesStack,analysisData){
   retval[threshold4<3, threshold4:=3]
 
   # create "normal", "medium", "high" categories
-  retval[, status := "Normal"]
-  retval[n > 1 & n > threshold2, status := "Medium"]
-  retval[n > 1 & n > threshold4, status := "High"]
+  DetermineStatus(retval)
+
+  # add county if this is a municipality
+  AddCounty(data=retval,loc=analysesStack$location)
+
+  # validate data
+  if(!ValidateAnalysisResults(retval,granularity=analysesStack$granularity)) stop("Results in a bad format")
+
   return(retval)
 }
 

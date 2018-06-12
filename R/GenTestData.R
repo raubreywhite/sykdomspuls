@@ -15,7 +15,7 @@ GenTestData <- function(){
 
   print(1)
   set.seed(4)
-  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- fread("/docs/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
   d <- d[municip %in% c("municip0301","municip1503","municip1505")]
 
   for(i in CONFIG$SYNDROMES){
@@ -28,7 +28,7 @@ GenTestData <- function(){
 
   print(2)
   set.seed(4)
-  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- fread("/docs/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
   d <- d[municip %in% c("municip0706","municip0719","municip0720","municip0710")]
 
   for(i in CONFIG$SYNDROMES){
@@ -41,7 +41,7 @@ GenTestData <- function(){
 
   print(3)
   set.seed(4)
-  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- fread("/docs/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
   d <- d[municip %in% c("municip0301")]
   population <- readRDS(file.path("/git/dashboards_sykdomspuls/tests/testthat","data","pop.RDS"))
   for(i in 1:length(population)){
@@ -69,7 +69,7 @@ GenTestData <- function(){
 
   print(4)
   set.seed(4)
-  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- fread("/docs/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
   d <- d[municip %in% c("municip1711")]
   population <- readRDS(file.path("/git/dashboards_sykdomspuls/tests/testthat","data","pop.RDS"))
   for(i in 1:length(population)){
@@ -93,7 +93,7 @@ GenTestData <- function(){
 
   print(5)
   set.seed(4)
-  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- fread("/docs/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
   d <- d[municip %in% c("municip5001","municip1601")]
   population <- readRDS(file.path("/git/dashboards_sykdomspuls/tests/testthat","data","pop.RDS"))
   for(i in 1:length(population)){
@@ -116,7 +116,7 @@ GenTestData <- function(){
 
   print(6)
   set.seed(4)
-  d <- fread("/analyses/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
+  d <- fread("/docs/testing/dashboards/data_raw/sykdomspuls/partially_formatted_2017_12_11.txt")
   d <- d[municip %in% c("municip1723","municip1756","municip5053")]
 
   for(i in CONFIG$SYNDROMES){
@@ -126,7 +126,15 @@ GenTestData <- function(){
   d[,consult:=influensa+gastro+respiratory+100+rpois(.N,500)]
 
   saveRDS(d,file="/git/dashboards_sykdomspuls/tests/testthat/data/inderoy_partially_formatted_2017_05_09.RDS")
+
 }
+
+
+
+
+
+
+
 
 
 

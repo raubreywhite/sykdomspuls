@@ -4,7 +4,7 @@ variablesAlgorithmDaily <- c("date")
 
 #' variablesAlgorithmWeekly
 #' @export variablesAlgorithmWeekly
-variablesAlgorithmWeekly <- c("year","week")
+variablesAlgorithmWeekly <- c("displayDay", "wkyr", "x", "year","week")
 
 #' variablesAlgorithmBasic
 #' @export variablesAlgorithmBasic
@@ -13,6 +13,16 @@ variablesAlgorithmBasic <- c("n","consult","pop","HelligdagIndikator")
 #' variablesAlgorithmProduced
 #' @export variablesAlgorithmProduced
 variablesAlgorithmProduced <- c("threshold0","threshold2","threshold4","threshold6","cumE1","cumL1","cumU1","zscore","failed")
+
+#' variablesPostProcessing
+#' @export variablesPostProcessing
+variablesPostProcessing <- c("age","type","location","locationName","status")
+
+#' variablesMunicip
+#' @export variablesMunicip
+variablesMunicip <- c("county")
+
+
 
 #' CONFIG
 #' @export CONFIG
