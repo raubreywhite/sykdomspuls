@@ -1,6 +1,6 @@
 Package: sykdomspuls
 Title: Norwegian Syndromic Surveillance System - NorSySS
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: person("Richard", "White", email = "w@rwhite.no", role = c("aut", "cre"))
 Description: https://www.fhi.no/en/hn/statistics/NorSySS/.
 Depends: R (>= 3.4.0)
