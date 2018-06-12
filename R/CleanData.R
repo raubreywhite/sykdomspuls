@@ -275,14 +275,16 @@ FormatData <- function(d,SYNDROME,
          by=.(age,date,municip),
         .SDcols = c(SYNDROME_AND_INFLUENSA, 'consult')]
 
+  dateMin <- min(d$date)
+  dateMax <- max(d$date)
   if(removeMunicipsWithoutConsults){
     d[,total:=sum(consult,na.rm=T),by=municip]
     d <- d[is.finite(total)]
     d <- d[total>0]
     d[,total:=NULL]
-    skeleton <- data.table(expand.grid(unique(d$municip),unique(d$age),unique(d$date)))
+    skeleton <- data.table(expand.grid(unique(norwayMunicipMerging[municipEnd %in% unique(d$municip) | municip %in% unique(d$municip)]$municip),unique(d$age),seq.Date(dateMin,dateMax,1)))
   } else {
-    skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),unique(d$date)))
+    skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),seq.Date(dateMin,dateMax,1)))
   }
   setnames(skeleton, c("municip","age","date"))
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)

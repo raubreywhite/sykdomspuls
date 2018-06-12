@@ -1,5 +1,4 @@
 context("QuasipoissonAlgorithm")
-if(FALSE){
 test_that("Sandefjord significantByThreshold vs significantByConfidenceIntervals", {
   library(data.table)
   if(interactive()){
@@ -133,5 +132,4 @@ test_that("meraker has issues with a very large trend", {
 
   expect_lt(mean(res2006_2010$threshold2)*1.25,mean(res2013_2016$threshold2))
 })
-}
 
