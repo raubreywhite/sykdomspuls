@@ -78,3 +78,10 @@ norwayLocations <- GenNorwayLocations()
 #' norwayMunicipMerging
 #' @export norwayMunicipMerging
 norwayMunicipMerging <- GenNorwayMunicipMerging()
+
+#' displayDays
+#' @export displayDays
+displayDays <- data.table(day = seq.Date(as.Date("2000-01-01"), as.Date("2030-01-01"), by = "days"))
+displayDays[, wkyr := format.Date(day, format = "%G-%V")]
+displayDays <- displayDays[, .(displayDay = max(day)), by = .(wkyr)]
+setkey(displayDays,wkyr)

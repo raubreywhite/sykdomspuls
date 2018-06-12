@@ -68,11 +68,7 @@ AddWkyrAndDisplayDateToWeekly <- function(data){
   day <- NULL
 
   data[, wkyr := paste0(year, "-", formatC(week, flag = "0", width = 2))]
-
-  dates <- data.table(day = seq.Date(as.Date("2000-01-01"), as.Date("2030-01-01"), by = "days"))
-  dates[, wkyr := format.Date(day, format = "%G-%V")]
-  dates <- dates[, .(displayDay = max(day)), by = .(wkyr)]
-  data <- merge(data, dates, by = "wkyr")
+  data <- merge(data, displayDays, by = "wkyr")
 
   return(data)
 }
