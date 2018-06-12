@@ -39,7 +39,8 @@ test_that("Basic Oslo", {
                     SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
-                    testIfHelligdagIndikatorFileIsOutdated=FALSE)
+                    testIfHelligdagIndikatorFileIsOutdated=FALSE,
+                    removeMunicipsWithoutConsults=TRUE)
   res <- res[municip %in% unique(d$municip)]
 
   expectedRes <- data.table(expand.grid(
@@ -87,7 +88,8 @@ test_that("Oslo + kristiansand fake data", {
                     SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
-                    testIfHelligdagIndikatorFileIsOutdated=FALSE)
+                    testIfHelligdagIndikatorFileIsOutdated=FALSE,
+                    removeMunicipsWithoutConsults=TRUE)
   res <- res[municip %in% unique(d$municip)]
 
   if(FALSE) if(interactive()) saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/results/formatted_2017_05_09.RDS")
@@ -118,7 +120,8 @@ test_that("Sandefjord joining together", {
                     SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
-                    testIfHelligdagIndikatorFileIsOutdated=FALSE)
+                    testIfHelligdagIndikatorFileIsOutdated=FALSE,
+                    removeMunicipsWithoutConsults=TRUE)
   res <- res[municip %in% unique(d$municip)]
 
   if(FALSE) if(interactive()) saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/results/formatted_sandefjord.RDS")
@@ -149,7 +152,8 @@ test_that("Inderoy joining together", {
                     SYNDROME="influensa",
                     population=population,
                     hellidager=hellidager,
-                    testIfHelligdagIndikatorFileIsOutdated=FALSE)
+                    testIfHelligdagIndikatorFileIsOutdated=FALSE,
+                    removeMunicipsWithoutConsults=TRUE)
   res <- res[municip %in% "municip5053"]
 
   if(FALSE) if(interactive()) saveRDS(res,file="/git/dashboards_sykdomspuls/tests/testthat/results/formatted_inderoy.RDS")

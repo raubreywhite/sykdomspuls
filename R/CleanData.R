@@ -240,13 +240,15 @@ GetPopulation <- function(
 #' @param population a
 #' @param hellidager a
 #' @param testIfHelligdagIndikatorFileIsOutdated a
+#' @param removeMunicipsWithoutConsults a
 #' @import data.table
 #' @importFrom lubridate today
 #' @export FormatData
 FormatData <- function(d,SYNDROME,
                        population=readRDS(system.file("extdata", "pop.RDS", package = "sykdomspuls")),
                        hellidager=fread(system.file("extdata", "DatoerMedHelligdager.txt", package = "sykdomspuls"))[,c("Dato","HelligdagIndikator"),with=FALSE],
-                       testIfHelligdagIndikatorFileIsOutdated=TRUE){
+                       testIfHelligdagIndikatorFileIsOutdated=TRUE,
+                       removeMunicipsWithoutConsults=FALSE){
   # variables used in data.table functions in this function
   . <- NULL
   municip <- NULL
@@ -273,13 +275,22 @@ FormatData <- function(d,SYNDROME,
          by=.(age,date,municip),
         .SDcols = c(SYNDROME_AND_INFLUENSA, 'consult')]
 
-  skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),unique(d$date)))
+  if(removeMunicipsWithoutConsults){
+    d[,total:=sum(consult,na.rm=T),by=municip]
+    d <- d[is.finite(total)]
+    d <- d[total>0]
+    d[,total:=NULL]
+    skeleton <- data.table(expand.grid(unique(d$municip),unique(d$age),unique(d$date)))
+  } else {
+    skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),unique(d$date)))
+  }
   setnames(skeleton, c("municip","age","date"))
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)
 
   for(i in c(SYNDROME_AND_INFLUENSA, 'consult')){
     data[is.na(get(i)), (i):= 0]
   }
+
 
   total <- data[municip!="municip9999",
          lapply(.SD, sum),
