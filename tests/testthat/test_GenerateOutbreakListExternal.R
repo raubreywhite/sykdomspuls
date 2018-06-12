@@ -20,7 +20,7 @@ test_that("Basic example", {
   expect_equal(nrow(res),1)
 })
 
-test_that("Basic example", {
+test_that("Basic example 2", {
   library(data.table)
 
   dk <- df <- vector("list")
