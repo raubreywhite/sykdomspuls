@@ -287,6 +287,7 @@ FormatData <- function(d,SYNDROME,
     skeleton <- data.table(expand.grid(unique(norwayMunicipMerging$municip),unique(d$age),seq.Date(dateMin,dateMax,1)))
   }
   setnames(skeleton, c("municip","age","date"))
+  skeleton[,date:=data.table::as.IDate(date)]
   data <- merge(skeleton,d,by=c("municip","age","date"),all.x=TRUE)
 
   for(i in c(SYNDROME_AND_INFLUENSA, 'consult')){
