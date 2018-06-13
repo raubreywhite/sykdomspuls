@@ -196,18 +196,18 @@ EmailExternalGenerateTable <- function(results,xtype,xemail){
   cumE1 <- NULL
   email <- NULL
 
-  setorder(results,zscore)
+  setorder(results,-zscore)
   results[, link := sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>", county, location, type, age)]
   results[is.na(county), link := sprintf("<a href='http://sykdomspulsen.fhi.no/lege123/#/ukentlig/%s/%s/%s/%s'>Klikk</a>", location, location, type, age)]
   # this turns "dirty" type (eg gastro) into "pretty" type (e.g. mage-tarm syndrome)
   results[,type_pretty:=type]
   RAWmisc::RecodeDT(results, switch = CONFIG$SYNDROMES, var = "type_pretty", oldOnLeft = FALSE)
-  results[, output := sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>", link, type_pretty, locationName, location, age, round(cumE1), RAWmisc::Format(zscore, digits = 2))]
+  results[, output := sprintf("<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>", link, type_pretty, locationName, location, age, n, round(cumE1), RAWmisc::Format(zscore, digits = 2))]
 
   r <- results[email == xemail & type==xtype]
   if(nrow(r)==0) return(sprintf("%s utbrudd:<br><br>Ingen utbrudd registrert",names(CONFIG$SYNDROMES)[CONFIG$SYNDROMES==xtype]))
 
-  emailText <- sprintf("%s utbrudd:<br><br><table style='width:90%%'><tr><th>Til nettsiden</th> <th>Syndrom</th> <th>Geografisk omr\u00E5de</th> <th>Geografisk omr\u00E5de</th> <th>Alder</th> <th>Eksess</th> <th>Z-verdi</th></tr>",names(CONFIG$SYNDROMES)[CONFIG$SYNDROMES==xtype])
+  emailText <- sprintf("%s utbrudd:<br><br><table style='width:90%%'><tr><th>Til nettsiden</th> <th>Syndrom</th> <th>Geografisk omr\u00E5de</th> <th>Geografisk omr\u00E5de</th> <th>Alder</th> <th>Meldte tilfeller</th> <th>Eksess</th> <th>Z-verdi</th></tr>",names(CONFIG$SYNDROMES)[CONFIG$SYNDROMES==xtype])
   for (i in 1:nrow(r)) {
     emailText <- sprintf("%s%s", emailText, r$output[i])
   }
@@ -358,9 +358,11 @@ Sykdomspulsen kan i noen tilfeller generere et OBS varsel selv om det bare er en
     if (noOutbreak) {
       emailText <- paste0(emailHeader, emailNoOutbreak)
       emailSubject <- emailSubjectNoOutbreak
+      useEmail <- "xxxxxxx"
     } else {
       emailText <- paste0(emailHeader, emailYesOutbreak)
       emailSubject <- emailSubjectYesOutbreak
+      useEmail <- em
     }
 
     # include registered places
@@ -372,7 +374,7 @@ Sykdomspulsen kan i noen tilfeller generere et OBS varsel selv om det bare er en
 
     # include outbreaks
     for(type in CONFIG$SYNDROMES_ALERT_EXTERNAL){
-      emailText <- paste0(emailText,EmailExternalGenerateTable(results=r,xtype=type,xemail=em),"<br><br>")
+      emailText <- paste0(emailText,EmailExternalGenerateTable(results=r,xtype=type,xemail=useEmail),"<br><br>")
     }
 
     fhi::DashboardEmailSpecific(
