@@ -106,6 +106,7 @@ AddCounty <- function(data,loc){
 #' AnalyseYearLine
 #' @param data a
 #' @param v a
+#' @importFrom RAWmisc YearN WeekN
 #' @import data.table
 #' @export AnalyseYearLine
 AnalyseYearLine <- function(data, v) {
@@ -129,15 +130,19 @@ AnalyseYearLine <- function(data, v) {
                       pop = sum(pop),
                       HelligdagIndikator=mean(HelligdagIndikator)), by = .(date)]
 
+  dates <- dataset[,"date"]
+  dates[,year:=RAWmisc::YearN(date)]
+  dates[,week:=RAWmisc::WeekN(date)]
+
   years <- CalculateTrainPredictYearPattern(yearMin=yearMin, yearMax=yearMax, numPerYear1=1)
   res <- vector("list",length=length(years))
 
   for(i in 1:length(years)){
-    dateTrainMin <- sprintf("%s-01-01",years[[i]]$yearTrainMin)
-    dateTrainMax <- sprintf("%s-12-31",years[[i]]$yearTrainMax)
+    dateTrainMin <- min(dates[year==years[[i]]$yearTrainMin]$date)
+    dateTrainMax <- max(dates[year==years[[i]]$yearTrainMax]$date)
 
-    datePredictMin <- sprintf("%s-01-01",years[[i]]$yearPredictMin)
-    datePredictMax <- sprintf("%s-12-31",years[[i]]$yearPredictMax)
+    datePredictMin <- min(dates[year==years[[i]]$yearPredictMin]$date)
+    datePredictMax <- max(dates[year==years[[i]]$yearPredictMax]$date)
 
     res[[i]] <- QuasipoissonTrainPredictData(
       datasetTrain=dataset[date >= dateTrainMin & date <= dateTrainMax],
@@ -154,6 +159,7 @@ AnalyseYearLine <- function(data, v) {
 #' PROJ
 #' @param data a
 #' @param v a
+#' @importFrom RAWmisc YearN WeekN
 #' @import data.table
 #' @export AnalyseRecentLine
 AnalyseRecentLine <- function(data, v) {
@@ -174,15 +180,19 @@ AnalyseRecentLine <- function(data, v) {
                                       pop = sum(pop),
                                       HelligdagIndikator=mean(HelligdagIndikator)), by = .(date)]
 
+  dates <- dataset[,"date"]
+  dates[,year:=RAWmisc::YearN(date)]
+  dates[,week:=RAWmisc::WeekN(date)]
+
   years <- CalculateTrainPredictYearPattern(yearMin=yearMin, yearMax=yearMax, numPerYear1=1)
   res <- vector("list",length=length(years))
 
   for(i in 1:length(years)){
-    dateTrainMin <- sprintf("%s-01-01",years[[i]]$yearTrainMin)
-    dateTrainMax <- sprintf("%s-12-31",years[[i]]$yearTrainMax)
+    dateTrainMin <- min(dates[year==years[[i]]$yearTrainMin]$date)
+    dateTrainMax <- max(dates[year==years[[i]]$yearTrainMax]$date)
 
-    datePredictMin <- sprintf("%s-01-01",years[[i]]$yearPredictMin)
-    datePredictMax <- sprintf("%s-12-31",years[[i]]$yearPredictMax)
+    datePredictMin <- min(dates[year==years[[i]]$yearPredictMin]$date)
+    datePredictMax <- max(dates[year==years[[i]]$yearPredictMax]$date)
 
     res[[i]] <- QuasipoissonTrainPredictData(
       datasetTrain=dataset[date >= dateTrainMin & date <= dateTrainMax],
